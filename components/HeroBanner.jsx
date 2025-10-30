@@ -9,6 +9,7 @@ import featured4 from '../src/assets/Featured4.png';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, A11y, Lazy, Pagination, Scrollbar } from 'swiper';
+import { useState, useEffect } from 'react';
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -17,22 +18,24 @@ import HomeProduct from './HomeProduct';
 
 // import required modules
 
-const HeroBanner = ({products}) => {
-  console.log(products);
-  
+const HeroBanner = () => {
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data));
+  }, []);
+
   return (
     <header className='header'>
- <Swiper
-      // install Swiper modules
-      modules={[Navigation, Pagination, Scrollbar, A11y]}
-      spaceBetween={50}
-      slidesPerView={1}
-      navigation
-      pagination={{ clickable: true }}
-      scrollbar={{ draggable: true }}
-      onSwiper={(swiper) => console.log(swiper)}
-      onSlideChange={() => console.log('slide change')}
-    >
+<Swiper
+                modules={[Navigation, Pagination]}
+                spaceBetween={10}
+                slidesPerView={1}
+                navigation
+                pagination={{ clickable: true }}
+                style={{ marginTop: "10px", borderRadius: "10px" }}
+              >
       <div className='products-container'>
             {products?.map(product => (
               <SwiperSlide>
@@ -50,7 +53,7 @@ const HeroBanner = ({products}) => {
 export const getServerSideProps = async () => {
   const query = '*[_type == "product"]';
   const products = await client.fetch(query);
-  // const bannerQuery = '*[_type == "banner"]';
+   //const bannerQuery = '*[_type == "banner"]';
   // const bannerData = await client.fetch(bannerQuery);
 
   return {

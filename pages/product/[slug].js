@@ -1,35 +1,41 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { client, urlFor } from '../../lib/client'
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai'
 import {CgShoppingCart} from 'react-icons/cg'
 import { useStateContext } from '../../context/StateContext';
 
-const ProductDetails = ({products, product}) => {
-    const { image, name, details, price, tags, care } = product;
+const ProductDetails = ({product}) => {
+    const [products, setProducts] = useState([]);
+    useEffect(() => {
+    fetch("/api/products")
+        .then((res) => res.json())
+        .then((data) => setProducts(data));
+    }, []);
+    const { images, name, details, price, tags, care } = products;
     const [index, setIndex] = useState(0);
     const {decQty, incQty, qty, onAdd} = useStateContext();
 
     const careList = [];
 
-    {for (let i = 0; i < care.length; i++) {
-        careList.push(care[i].children[0].text)
-    }}
+    // for (let i = 0; i < care.length; i++) {
+    //     careList.push(care[i].children[0].text)
+    // }
 
     return (
         <div className='products'>
             <div className='product-detail-container'>
                 <div className='product-images'>
                     <div className='small-images-container'>
-                        {image?.map((item, ind) => (
+                        {images?.map((item, ind) => (
                             <img 
                             key={ind}
-                            src={urlFor(item)} 
+                            src={(item)} 
                             className='small-image' 
                             onMouseEnter={() => setIndex(ind)} />
                         ))}
                     </div>
                     <div className='big-image-container'>
-                        <img src={urlFor(image && image[index])} />
+                        <img src={(images && images[index])} />
                     </div>
                 </div>
                 <div className='product-details'>
@@ -71,7 +77,7 @@ const ProductDetails = ({products, product}) => {
                 </div>
                 <div className='desc-details'>
                     <h4>PRODUCT DETAILS</h4>
-                    <p>{details[0].children[0].text}</p>  
+                    {/* <p>{details[0].children[0].text}</p>   */}
                 </div>
                 <div className='desc-care'>
                     <h4>PRODUCT CARE</h4>

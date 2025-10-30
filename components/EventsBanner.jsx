@@ -7,13 +7,13 @@ import event3 from '../src/assets/event3.png'
 const EventsBanner = () => {
   return (
     <section className='event-container'>
-      <div className='subtitle'>
+      {/* <div className='subtitle'>
         <span>PROMOTIONS</span>
         <h2>Our Promotions Events</h2>
-      </div>
+      </div> */}
 
       <div className='event-banner'>
-        <div className='event-banner-left'>
+        {/* <div className='event-banner-left'>
           <div className='event-card'>
             <div className='content'>
               <h3>GET UP TO <span>60%</span></h3>
@@ -27,7 +27,7 @@ const EventsBanner = () => {
             <p>USE PROMO CODE</p>
             <button>DINEWEEKENDSALE</button>
           </div>
-        </div>
+        </div> */}
 
         <div className='event-banner-right'>
           <div className='event-banner-right-1'>
@@ -41,6 +41,28 @@ const EventsBanner = () => {
             <Image src={event2} alt='event' />
           </div>
 
+          <div className='event-banner-right-2'>
+            <div className='details'>
+              <p>Flex Push Button Bomber</p>
+              <div className='price'>
+                <span>$225.00</span>
+                <span>$190.00</span>
+              </div>
+            </div>
+            <Image src={event3} alt='event' />
+          </div>
+          
+          <div className='event-banner-right-2'>
+            <div className='details'>
+              <p>Flex Push Button Bomber</p>
+              <div className='price'>
+                <span>$225.00</span>
+                <span>$190.00</span>
+              </div>
+            </div>
+            <Image src={event3} alt='event' />
+          </div>
+          
           <div className='event-banner-right-2'>
             <div className='details'>
               <p>Flex Push Button Bomber</p>

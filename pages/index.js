@@ -16,8 +16,8 @@ const Home = ({products}) => {
 
       <div className='products-outer-container'>
         <div className='subtitle'>
-          <span>PRODUCTS</span>
-          <h2>Check What We Have</h2>
+          {/* <span>PRODUCTS</span> */}
+          <h1>RECOMMENDED FOR YOU</h1>
         </div>
         <Swiper
           breakpoints={{
@@ -53,6 +53,121 @@ const Home = ({products}) => {
       </div>
 
       <FeaturesBanner />
+      
+      <div className='products-outer-container'>
+        <div className='subtitle'>
+          {/* <span>PRODUCTS</span> */}
+          <h1>EXPLORE COLLECTION</h1>
+        </div>
+        <Swiper
+          breakpoints={{
+              // width >= 300
+              300: {
+                slidesPerView: 1,
+                spaceBetween: 100
+              },
+              // width >= 1000
+              1000: {
+                slidesPerView: 2,
+                spaceBetween: 0
+              },
+              // width >= 1260
+              1260: {
+                slidesPerView: 3,
+                spaceBetween: 0
+              }
+          }}
+          modules={[Navigation, A11y]}
+          spaceBetween={0}
+          slidesPerView={3}
+          navigation
+        >
+          <div className='products-container'>
+            {products?.map(product => (
+              <SwiperSlide>
+                <Product key={product._id} product={product} />
+              </SwiperSlide>
+            ))}
+          </div>
+        </Swiper>
+      </div>
+
+
+      <div className='products-outer-container'>
+        <div className='subtitle'>
+          {/* <span>PRODUCTS</span> */}
+          <h1>RECENTLY VIEWED</h1>
+        </div>
+        <Swiper
+          breakpoints={{
+              // width >= 300
+              300: {
+                slidesPerView: 1,
+                spaceBetween: 100
+              },
+              // width >= 1000
+              1000: {
+                slidesPerView: 2,
+                spaceBetween: 0
+              },
+              // width >= 1260
+              1260: {
+                slidesPerView: 3,
+                spaceBetween: 0
+              }
+          }}
+          modules={[Navigation, A11y]}
+          spaceBetween={0}
+          slidesPerView={3}
+          navigation
+        >
+          <div className='products-container'>
+            {products?.map(product => (
+              <SwiperSlide>
+                <Product key={product._id} product={product} />
+              </SwiperSlide>
+            ))}
+          </div>
+        </Swiper>
+      </div>
+      
+      <div className='products-outer-container'>
+        <div className='subtitle'>
+          {/* <span>PRODUCTS</span> */}
+          <h1>CUSTOMER REVIEWS</h1>
+        </div>
+        <Swiper
+          breakpoints={{
+              // width >= 300
+              300: {
+                slidesPerView: 1,
+                spaceBetween: 100
+              },
+              // width >= 1000
+              1000: {
+                slidesPerView: 2,
+                spaceBetween: 0
+              },
+              // width >= 1260
+              1260: {
+                slidesPerView: 3,
+                spaceBetween: 0
+              }
+          }}
+          modules={[Navigation, A11y]}
+          spaceBetween={0}
+          slidesPerView={3}
+          navigation
+        >
+          <div className='products-container'>
+            {products?.map(product => (
+              <SwiperSlide>
+                <Product key={product._id} product={product} />
+              </SwiperSlide>
+            ))}
+          </div>
+        </Swiper>
+      </div>
       <Newsletter />
     </>
   )
