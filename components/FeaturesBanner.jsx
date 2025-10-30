@@ -1,50 +1,85 @@
-import React from 'react'
+
+import { useEffect, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, A11y, Lazy, Pagination, Scrollbar } from 'swiper';
 import Image from 'next/image'
 import img from '../src/assets/feature.png'
 import Link from 'next/link'
+const FeaturesBanner =()=> {
+  const [products, setProducts] = useState([]);
 
-const FeaturesBanner = () => {
+  useEffect(() => {
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((err) => console.error("Error fetching products:", err));
+  }, []);
+
+  const handlePayment = async (amount) => {
+    const res = await fetch("/api/razorpay", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount }),
+    });
+
+    const order = await res.json();
+
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: "My Shop",
+      description: "Test Payment",
+      order_id: order.id,
+      handler: function (response) {
+        alert("Payment successful! 🎉");
+        console.log(response);
+      },
+      prefill: {
+        name: "John Doe",
+        email: "john@example.com",
+        contact: "9999999999",
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
+
+    const razor = new window.Razorpay(options);
+    razor.open();
+  };
+
+  if (!products.length) return <p style={{ padding: 20 }}>No products found.</p>;
+
   return (
-    <section className='features-section'>
-      {/* <div className='title'>
-        <h1>Unique and Authentic Vintage Designer Jewellery</h1>
-      </div> */}
+
+      <div
+      >
+        {products.map((product) => (
+          
+     <section className='features-section'>
 
       <div className='content'>
-        {/* <div className='left'>
-          <div className="feature-background">
-            Different from others
-          </div>
-          <div>
-            <h3>Using Good Quality Materials</h3>
-            <p>Lorem ipsum dolor sit amt, consectetur adipiscing elit.</p>
-          </div>
-          <div>
-            <h3>100% Handmade Products</h3>
-            <p>Lorem ipsum dolor sit amt, consectetur adipiscing elit.</p>
-          </div>
-          <div>
-            <h3>Modern Fashion Design</h3>
-            <p>Lorem ipsum dolor sit amt, consectetur adipiscing elit.</p>
-          </div>
-          <div>
-            <h3>Discount for Bulk Orders</h3>
-            <p>Lorem ipsum dolor sit amt, consectetur adipiscing elit.</p>
-          </div>
-        </div> */}
+        
 
         <div className='right'>
-          <Image src={img} width={800} height={450} alt='img' />
+           <Image src={product.images[0]} width={800} height={450} alt='img' />
           <div>
-            <p>This piece is ethically crafted in our small family-owned workshop in Peru with unmatched attention to detail and care. The Natural color is the actual natural color of the fiber, undyed and 100% traceable.</p>
+<p>This piece is ethically crafted in our small family-owned workshop in Peru with unmatched attention to detail and care. The Natural color is the actual natural color of the fiber, undyed and 100% traceable.</p>
             <Link href={'/products'}>
-              <button className='btn' type='button'>Shop now</button>
-            </Link>
-          </div>
-        </div>
+              <button className='btn' type='button'
+              onClick={() => handlePayment(product.price)}
+              
+              >Shop now</button>
+             </Link>
+           </div>
+         </div>
+       </div>
+     </section>
+        ))}
       </div>
-    </section>
-  )
+  );
 }
+
 
 export default FeaturesBanner
