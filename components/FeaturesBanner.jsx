@@ -55,7 +55,6 @@ const FeaturesBanner =()=> {
 
       <div
       >
-        {products.map((product) => (
           
      <section className='features-section'>
 
@@ -63,20 +62,19 @@ const FeaturesBanner =()=> {
         
 
         <div className='right'>
-           <Image src={product.images[0]} width={800} height={450} alt='img' />
+           <Image src={products[0].images[0]} width={800} height={450} alt='img' />
           <div>
 <p>This piece is ethically crafted in our small family-owned workshop in Peru with unmatched attention to detail and care. The Natural color is the actual natural color of the fiber, undyed and 100% traceable.</p>
             <Link href={'/products'}>
               <button className='btn' type='button'
-              onClick={() => handlePayment(product.price)}
+              onClick={() => handlePayment(products[0].price)}
               
-              >Shop now</button>
+              >Buy now</button>
              </Link>
            </div>
          </div>
        </div>
      </section>
-        ))}
       </div>
   );
 }

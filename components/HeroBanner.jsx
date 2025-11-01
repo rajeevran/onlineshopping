@@ -21,7 +21,7 @@ import HomeProduct from './HomeProduct';
 const HeroBanner = () => {
   const [products, setProducts] = useState([]);
   useEffect(() => {
-    fetch("/api/products")
+    fetch("/api/homeproducts")
       .then((res) => res.json())
       .then((data) => setProducts(data));
   }, []);
@@ -29,20 +29,25 @@ const HeroBanner = () => {
   return (
     <header className='header'>
 <Swiper
-                modules={[Navigation, Pagination]}
-                spaceBetween={10}
-                slidesPerView={1}
-                navigation
-                pagination={{ clickable: true }}
-                style={{ marginTop: "10px", borderRadius: "10px" }}
-              >
-      <div className='products-container'>
-            {products?.map(product => (
-              <SwiperSlide>
-                <HomeProduct key={product._id} product={product} />
-              </SwiperSlide>
-            ))}
-          </div>
+        modules={[Navigation, Pagination]}
+        spaceBetween={10}
+        slidesPerView={1}
+        navigation
+        pagination={{ clickable: true }}
+        loop={true}
+        autoplay={{
+          delay: 1500, // time between slides (2.5s)
+          disableOnInteraction: false, // keeps autoplay after user swipes
+        }}
+        style={{ borderRadius: "10px" }}
+      >
+<div className='products-container'>
+    {products?.map(product => (
+      <SwiperSlide>
+        <HomeProduct key={product._id} product={product} />
+      </SwiperSlide>
+    ))}
+  </div>
       
     </Swiper>
     </header>

@@ -3,11 +3,18 @@ import { client, urlFor } from '../../lib/client'
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai'
 import {CgShoppingCart} from 'react-icons/cg'
 import { useStateContext } from '../../context/StateContext';
+import { useRouter } from 'next/dist/client/router';
 
 const ProductDetails = ({product}) => {
+    const router = useRouter();
+  const { slug } = router.query; // ✅ gets the dynamic [slug] value
+    console.log('product--',slug);
+  if (!slug) {
+    return <p>Loading...</p>; // show loading until slug is available
+  }
     const [products, setProducts] = useState([]);
     useEffect(() => {
-    fetch("/api/products")
+    fetch(`/api/products/${slug}`)
         .then((res) => res.json())
         .then((data) => setProducts(data));
     }, []);
@@ -30,12 +37,13 @@ const ProductDetails = ({product}) => {
                             <img 
                             key={ind}
                             src={(item)} 
+                            height={400} width={600} 
                             className='small-image' 
                             onMouseEnter={() => setIndex(ind)} />
                         ))}
                     </div>
                     <div className='big-image-container'>
-                        <img src={(images && images[index])} />
+                        <img src={(images && images[index])} height={600} width={600} />
                     </div>
                 </div>
                 <div className='product-details'>
@@ -62,8 +70,8 @@ const ProductDetails = ({product}) => {
                         </div>
                     </div>
                     <div className='add-to-cart'>
-                        <button className='btn' type='button' onClick={() => onAdd(product, qty)}><CgShoppingCart size={20} />Add to Cart</button>
-                        <p className='price'>${price}.00</p>  
+                        <button className='btn' type='button' onClick={() => onAdd(products, qty)}><CgShoppingCart size={20} />Add to Cart</button>
+                        <p className='price'>Rs {price}.00</p>  
                     </div>
                 </div>
             </div>
@@ -93,35 +101,35 @@ const ProductDetails = ({product}) => {
 }
 export default ProductDetails
 
-export const getStaticProps = async ({params: {slug}}) => {
-    const query = `*[_type == "product" && slug.current == '${slug}'][0]`;
-    const productsQuery = '*[_type == "product"]'
-    const product = await client.fetch(query);
-    const products = await client.fetch(productsQuery)
+// export const getStaticProps = async ({params: {slug}}) => {
+//     const query = `*[_type == "product" && slug.current == '${slug}'][0]`;
+//     const productsQuery = '*[_type == "product"]'
+//     const product = await client.fetch(query);
+//     const products = await client.fetch(productsQuery)
   
-    return {
-      props: { products, product }
-    }
-}
+//     return {
+//       props: { products, product }
+//     }
+// }
 
-// Generates `/product/1` and `/product/2`
-export const getStaticPaths = async () => {
-    const query = `*[_type == "product"] {
-        slug {
-            current
-        }
-    }`;
+// // Generates `/product/1` and `/product/2`
+// export const getStaticPaths = async () => {
+//     const query = `*[_type == "product"] {
+//         slug {
+//             current
+//         }
+//     }`;
 
-    const products = await client.fetch(query);
+//     const products = await client.fetch(query);
 
-    const paths = products.map((product) => ({
-        params: {
-            slug: product.slug.current
-        }
-    }));
+//     const paths = products.map((product) => ({
+//         params: {
+//             slug: product.slug.current
+//         }
+//     }));
 
-    return {
-      paths,
-      fallback: 'blocking'
-    }
-}
+//     return {
+//       paths,
+//       fallback: 'blocking'
+//     }
+// }

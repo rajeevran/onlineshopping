@@ -37,6 +37,7 @@ const Home = ({products}) => {
                 spaceBetween: 0
               }
           }}
+          
           modules={[Navigation, A11y]}
           spaceBetween={0}
           slidesPerView={3}
