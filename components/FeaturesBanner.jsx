@@ -1,7 +1,5 @@
 
 import { useEffect, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, A11y, Lazy, Pagination, Scrollbar } from 'swiper';
 import Image from 'next/image'
 import img from '../src/assets/feature.png'
 import Link from 'next/link'

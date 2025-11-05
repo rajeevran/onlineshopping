@@ -69,7 +69,7 @@ nav li, footer li, .size li, button, .cart, .navbar-smallscreen_links {
 
 /*------------------------- NAVBAR ----------------------*/
 nav {
-  margin: 2rem 8rem;
+  margin: 2rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -691,7 +691,7 @@ nav input {
 }
 .features-section .content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* grid-template-columns: 1fr 2fr; */
   padding: 0 8rem 4rem;
   background-color: #FBFCFF;
 }
@@ -730,6 +730,28 @@ nav input {
   letter-spacing: 0.05em;
   color: #212121;
 }
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .features-section .content .right {
   display: flex;
   justify-content: center;

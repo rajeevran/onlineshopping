@@ -27,7 +27,7 @@
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.7.1",
     "stripe": "^11.5.0",
-    "swiper": "^8.4.5"
+    "swiper": "^10.0.0"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.18.6"
