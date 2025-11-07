@@ -1,13 +1,20 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {client} from '../lib/client'
 import { AllProducts } from '../components'
 
 const kids = ({AllKidsProducts}) => {
+    const [products, setProducts] = useState([]);
+    useEffect(() => {
+
+        fetch("/api/products?category=kid")
+        .then((res) => res.json())
+        .then((data) => setProducts(data));
+    },[])
     return (
         <div className='Allproducts-container'>
-            {AllKidsProducts ?.map(prod => (
+            {products && products.length>0?products?.map(prod => (
                 <AllProducts key={prod._id} allproducts={prod} />
-            ))}
+            )):"No Kids Product found"}
         </div>
       )
 }

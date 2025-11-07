@@ -18,16 +18,16 @@ const ProductDetails = ({product}) => {
         .then((res) => res.json())
         .then((data) => setProducts(data));
     }, []);
-    const { images, name, details, price, tags, care } = products;
+    const { images, name, description, price, tags, care } = products;
     const [index, setIndex] = useState(0);
     const {decQty, incQty, qty, onAdd} = useStateContext();
 
     const careList = [];
-
-    // for (let i = 0; i < care.length; i++) {
-    //     careList.push(care[i].children[0].text)
-    // }
-
+    if(care && care.length>0){
+    for (let i = 0; i < care.length; i++) {
+        careList.push(care[i])
+    }
+    }
     return (
         <div className='products'>
             <div className='product-detail-container'>
@@ -71,7 +71,7 @@ const ProductDetails = ({product}) => {
                     </div>
                     <div className='add-to-cart'>
                         <button className='btn' type='button' onClick={() => onAdd(products, qty)}><CgShoppingCart size={20} />Add to Cart</button>
-                        <p className='price'>Rs {price}.00</p>  
+                        <p className='price'>Rs {price *qty}.00</p>  
                     </div>
                 </div>
             </div>
@@ -85,16 +85,18 @@ const ProductDetails = ({product}) => {
                 </div>
                 <div className='desc-details'>
                     <h4>PRODUCT DETAILS</h4>
-                    {/* <p>{details[0].children[0].text}</p>   */}
                 </div>
+                    {description}
+
                 <div className='desc-care'>
                     <h4>PRODUCT CARE</h4>
-                    <ul>
+                </div>
+                                    <ul>
                     {careList.map(list => (
                         <li>{list}</li>
                     ))}
                     </ul>
-                </div>
+
             </div>
         </div>
     )

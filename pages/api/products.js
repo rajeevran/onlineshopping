@@ -45,6 +45,7 @@ export default async function handler(req, res) {
         category: fields.category?.[0] || "",
         description: fields.description?.[0] || "",
         tags: fields.tags ? fields.tags[0].split(",").map((t) => t.trim()) : [],
+        care: fields.care ? fields.care[0].split(",").map((t) => t.trim()) : [],
         images: imagePaths,
       };
 
@@ -52,7 +53,12 @@ export default async function handler(req, res) {
       return res.status(201).json(newProduct);
     });
   } else if (req.method === "GET") {
-    const products = await Product.find();
+    console.log('requuuu',req.query);
+    let condition ={}
+    if(req.query.category){
+      condition = {category:req.query.category}
+    }
+    const products = await Product.find(condition);
     return res.status(200).json(products);
   } else {
     res.setHeader("Allow", ["GET", "POST"]);

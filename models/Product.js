@@ -7,6 +7,7 @@ const ProductSchema = new mongoose.Schema({
   description: String,
   images: { type: [String], default: [] }, // Store file URLs
   tags: { type: [String], default: [] },
+  care: { type: [String], default: [] },
   inStock: { type: Boolean, default: true },
   discountPrice: Number,
   sizes: [String],

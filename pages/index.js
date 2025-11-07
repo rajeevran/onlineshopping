@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {client} from '../lib/client'
 import { HeroBanner, EventsBanner, Newsletter, FeaturesBanner, Product } from '../components'
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -10,8 +10,39 @@ import 'swiper/css/navigation';
 
 // import required modules
 import { Navigation,A11y } from 'swiper/modules';
+import Review from '../components/Review';
 
 const Home = ({products}) => {
+    const [festiveWave, setFestiveWave] = useState([]);
+    const [recommendedProduct, setRecommendedProduct] = useState([]);
+    const [customerReview, setCustomerReview] = useState([]);
+    const [recentlyViewed, setRecentlyViewed] = useState([]);
+    const [exploreCollection, setExploreCollection] = useState([]);
+    useEffect(() => {
+
+      fetch("/api/festiveWave")
+        .then((res) => res.json())
+        .then((data) => setFestiveWave(data));
+
+      fetch("/api/recommendedProduct")
+        .then((res) => res.json())
+        .then((data) => setRecommendedProduct(data));
+        
+      fetch("/api/customerReview")
+        .then((res) => res.json())
+        .then((data) => setCustomerReview(data));
+        
+      fetch("/api/recentlyViewed")
+        .then((res) => res.json())
+        .then((data) => setRecentlyViewed(data));
+        
+      fetch("/api/exploreCollection")
+        .then((res) => res.json())
+        .then((data) => setExploreCollection(data));
+
+    }, []);
+    console.log('festiveWave',festiveWave);
+    
   return (
     <>
       <HeroBanner />
@@ -40,7 +71,7 @@ const Home = ({products}) => {
           navigation
         >
           <div className='products-container'>
-            {products?.map(product => (
+            {festiveWave && festiveWave.length>0 &&  festiveWave[0].productId.length>0 && festiveWave[0].productId?.map(product => (
               <SwiperSlide>
                 <Product key={product._id} product={product} />
               </SwiperSlide>
@@ -78,7 +109,7 @@ const Home = ({products}) => {
           navigation
         >
           <div className='products-container'>
-            {products?.map(product => (
+         {recommendedProduct && recommendedProduct.length>0 &&  recommendedProduct[0].productId.length>0 && recommendedProduct[0].productId?.map(product => (
               <SwiperSlide>
                 <Product key={product._id} product={product} />
               </SwiperSlide>
@@ -118,7 +149,7 @@ const Home = ({products}) => {
           navigation
         >
           <div className='products-container'>
-            {products?.map(product => (
+          {exploreCollection && exploreCollection.length>0 &&  exploreCollection[0].productId.length>0 && exploreCollection[0].productId?.map(product => (
               <SwiperSlide>
                 <Product key={product._id} product={product} />
               </SwiperSlide>
@@ -157,7 +188,7 @@ const Home = ({products}) => {
           navigation
         >
           <div className='products-container'>
-            {products?.map(product => (
+           {recentlyViewed && recentlyViewed.length>0 &&  recentlyViewed[0].productId.length>0 && recentlyViewed[0].productId?.map(product => (
               <SwiperSlide>
                 <Product key={product._id} product={product} />
               </SwiperSlide>
@@ -195,9 +226,9 @@ const Home = ({products}) => {
           navigation
         >
           <div className='products-container'>
-            {products?.map(product => (
+            {customerReview && customerReview.length>0 && customerReview?.map(product => (
               <SwiperSlide>
-                <Product key={product._id} product={product} />
+                 <Review key={product.productId._id}  userId={product.userId} comment={product.comment} rating={product.rating} product={product.productId} /> 
               </SwiperSlide>
             ))}
           </div>
