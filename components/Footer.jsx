@@ -22,10 +22,7 @@ const Footer = () => {
           <h3>TOP CATEGORIES</h3>
           <ul>
             <li>Suits</li>
-            <li>Kurtas</li>
             <li>Female Dress</li>
-            <li>Male Dress</li>
-            <li>Kids Dress</li>
           </ul>
         </div>
         <div className='footer-links'>
@@ -38,7 +35,7 @@ const Footer = () => {
           </ul>
         </div>
         <div className='footer-links'>
-          <h3>DINE BRAND</h3>
+          <h3>Red Kurti Brand</h3>
           <ul>
             <li>About Us</li>
             <li>Investor Information</li>

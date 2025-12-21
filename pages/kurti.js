@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import {client} from '../lib/client'
 import { AllProducts } from '../components'
 
-const female = ({AllFemaleProducts}) => {
+const kurti = ({AllFemaleProducts}) => {
         const [products, setProducts] = useState([]);
         useEffect(() => {
             fetch("/api/products?category=women")
@@ -27,4 +27,4 @@ export const getServerSideProps = async () => {
     }
 }
 
-export default female
+export default kurti

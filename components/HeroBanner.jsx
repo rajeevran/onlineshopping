@@ -1,12 +1,4 @@
-import React from 'react'
-import Image from 'next/image'
-import { CgShoppingCart } from 'react-icons/cg'
-import headerImg from '../src/assets/header.png'
-import featured1 from '../src/assets/Featured1.png';
-import featured2 from '../src/assets/Featured2.png';
-import featured3 from '../src/assets/Featured3.png';
-import featured4 from '../src/assets/Featured4.png';
-import Link from 'next/link';
+
 import { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 

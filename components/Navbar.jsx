@@ -18,10 +18,10 @@ const Navbar = ({Searchproducts}) => {
         <Image src={logo} width={140} height={25} alt='logo' />
       </Link>
       <ul className='nav-links'>
-        <Link href='/female'><li>Female</li></Link>
-        <Link href='/male'><li>Male</li></Link>
+        {/* <Link href='/kurti'><li>Kurti</li></Link> */}
+        {/* <Link href='/male'><li>Male</li></Link>
         <Link href='/kids'><li>Kids</li></Link>
-        <Link href='/products'><li>All Products</li></Link>
+        <Link href='/products'><li>All Products</li></Link> */}
       </ul>
 
         <div className='search-bar'>
@@ -33,7 +33,12 @@ const Navbar = ({Searchproducts}) => {
         {/* onChange={(event) => {
               setSearchTerm(event.target.value);
           }} */}
-
+        <button
+          className="login-btn"
+          onClick={() => router.push("/login")}
+        >
+          Login
+        </button>
       {showCart ?
       <Link href='/cart'>
         <button className='cart' onClick={() => setShowCart(false)}>   

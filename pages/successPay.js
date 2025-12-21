@@ -25,8 +25,8 @@ const successPay = () => {
             <p>Check your email inbox for the receipt</p>
             <p className='description'>
                 If you have any questions, please email 
-                <a href="mailto:dinemarket@example.com">
-                    dinemarket@example.com
+                <a href="mailto:redkurti@example.com">
+                    redkurti@example.com
                 </a>
             </p>
             <Link href="/">

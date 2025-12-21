@@ -516,6 +516,16 @@ nav input {
   padding: 2rem 4rem 6rem;
   gap: 2rem;
 }
+.login-btn {
+  background-color: #ff4c4c;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  font-size: 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
 .desc-title {
   border-bottom: 2px solid #C4C4C4;
   position: relative;
