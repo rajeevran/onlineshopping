@@ -1,7 +1,6 @@
 
 import { useEffect, useState } from "react";
 import Image from 'next/image'
-import img from '../src/assets/feature.png'
 import Link from 'next/link'
 const FeaturesBanner =()=> {
   const [products, setProducts] = useState([]);

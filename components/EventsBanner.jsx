@@ -1,8 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import event1 from '../src/assets/event1.png' 
-import event2 from '../src/assets/event2.png' 
-import event3 from '../src/assets/event3.png' 
 
 const EventsBanner = () => {
   return (
@@ -38,7 +35,6 @@ const EventsBanner = () => {
                 <span>$75.00</span>
               </div>
             </div>
-            <Image src={event2} alt='event' />
           </div>
 
           <div className='event-banner-right-2'>
@@ -49,7 +45,6 @@ const EventsBanner = () => {
                 <span>$190.00</span>
               </div>
             </div>
-            <Image src={event3} alt='event' />
           </div>
           
           <div className='event-banner-right-2'>
@@ -60,7 +55,6 @@ const EventsBanner = () => {
                 <span>$190.00</span>
               </div>
             </div>
-            <Image src={event3} alt='event' />
           </div>
           
           <div className='event-banner-right-2'>
@@ -71,7 +65,6 @@ const EventsBanner = () => {
                 <span>$190.00</span>
               </div>
             </div>
-            <Image src={event3} alt='event' />
           </div>
         </div>
       </div>
