@@ -1592,3 +1592,99 @@ footer p, footer li {
   gap: 10px;
   font-size: 13px;
 }
+.coming-soon {
+  min-height: 80vh;
+  background: linear-gradient(135deg, #fff8ee, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Arial", sans-serif;
+  padding: 20px;
+}
+
+.content {
+  width: 80vw;
+  text-align: center;
+  background: #ffffff;
+  padding: 50px 40px;
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.content h1 {
+  font-size: 42px;
+  margin-bottom: 15px;
+  color: #222;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.divider {
+  width: 60px;
+  height: 3px;
+  background: #c62828;
+  margin: 25px auto;
+}
+
+.notify-form {
+  display: flex;
+  margin-top: 20px;
+}
+
+.notify-form input {
+  flex: 1;
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+}
+
+.notify-form button {
+  padding: 12px 20px;
+  border: none;
+  background: #c62828;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 0 5px 5px 0;
+}
+
+.notify-form button:hover {
+  background: #a91f1f;
+}
+
+.footer-text {
+  font-size: 13px;
+  color: #777;
+  margin-top: 18px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .content {
+    padding: 35px 25px;
+  }
+
+  .content h1 {
+    font-size: 34px;
+  }
+
+  .notify-form {
+    flex-direction: column;
+  }
+
+  .notify-form input,
+  .notify-form button {
+    border-radius: 5px;
+  }
+
+  .notify-form button {
+    margin-top: 10px;
+  }
+}
