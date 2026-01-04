@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { use, useEffect, useRef } from 'react';
 import { AiOutlineMinus, AiOutlinePlus, AiOutlineShopping } from 'react-icons/ai';
 import {HiOutlineTrash} from 'react-icons/hi'
 import toast from 'react-hot-toast';
@@ -8,7 +8,7 @@ import getStripe from '../lib/getStripe';
 
 const Cart = () => {
   const cartRef = useRef();
-  const {cartItems, totalPrice, totalQty, onRemove, toggleCartItemQuantity} = useStateContext();
+  const {cartItems, onGetCartItems, totalPrice, totalQty, onRemove, toggleCartItemQuantity} = useStateContext();
 
   const handleCheckout = async (amount) => {
     const res = await fetch("/api/razorpay", {
@@ -43,7 +43,11 @@ const Cart = () => {
     const razor = new window.Razorpay(options);
     razor.open();
   }
-
+  console.log('cartitems',cartItems);
+  
+  useEffect(() => {
+    onGetCartItems();
+  }, []);
   return (
     <div className='cart-wrapper' ref={cartRef}>
       <h2>Shopping Cart</h2>
@@ -59,12 +63,12 @@ const Cart = () => {
           {cartItems.length >= 1 && cartItems.map((item) => (
             <div key={item._id} className='item-card'>
               <div className='item-image'>
-                <img src={(item?.images[0])} alt='img' />
+                <img src={(item?.product?.images[0])} alt='img' />
               </div>
               <div className='item-details'>
                 <div className='name-and-remove'>
-                  <h3>{item.name}</h3>  
-                  <button type='buttin' onClick={() => onRemove(item)} className='remove-item'>
+                  <h3>{item?.product?.name}</h3>  
+                  <button type='buttin' onClick={() => onRemove(item?.product,item.quantity)} className='remove-item'>
                   <HiOutlineTrash size={28} />  
                   </button>
                 </div>

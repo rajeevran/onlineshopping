@@ -9,10 +9,15 @@ import { useStateContext } from '../context/StateContext';
 import { useRouter } from "next/navigation";
 
 const Navbar = ({Searchproducts}) => {
-  const {showCart, setShowCart, totalQty} = useStateContext();
+  const {showCart, setShowCart, totalQty, onGetCartItems } = useStateContext();
+  const [navigateToCart, setNavigateToCart] = useState(false);
+  const router = useRouter();
+
+    useEffect(() => {
+      onGetCartItems();
+    }, []);
   const [toggleMenu, setToggleMenu] = useState(false);
   // const [searchTerm, setSearchTerm] = useState('')
-  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -37,7 +42,8 @@ const Navbar = ({Searchproducts}) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
+  console.log('showcart',showCart);
+  
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
@@ -55,60 +61,63 @@ const Navbar = ({Searchproducts}) => {
         <Link href='/products'><li>All Products</li></Link> */}
       </ul>
 
-        <div className='search-bar'>
+        {/* <div className='search-bar'>
           <CiSearch />
           <input 
             type='text' 
             placeholder='What you looking for'/>
-        </div>
+        </div> */}
         {/* onChange={(event) => {
               setSearchTerm(event.target.value);
           }} */}
 
       <div className="navbar">
-      {!isLoggedIn ? (
-      <button
-        className="login-btn"
-        onClick={() => router.push("/login")}
-      >
-        Login
-      </button>
-      ) : (
-      <div className="account-wrapper" ref={dropdownRef}>
+        {!isLoggedIn ? (
         <button
-          className="account-btn"
-          onClick={() => setOpen(!open)}
+          className="login-btn"
+          onClick={() => router.push("/login")}
         >
-          My Account ▾
+          Login
         </button>
+        ) : (
+        <div className="account-wrapper" ref={dropdownRef}>
+          <button
+            className="account-btn"
+            onClick={() => setOpen(!open)}
+          >
+            My Account ▾
+          </button>
 
-        {open && (
-          <div className="dropdown">
-            <div onClick={() => router.push("/myaccount")}>
-              My Account
+          {open && (
+            <div className="dropdown">
+              <div onClick={() => router.push("/myaccount")}>
+                My Account
+              </div>
+              <div onClick={handleLogout}>
+                Logout
+              </div>
             </div>
-            <div onClick={handleLogout}>
-              Logout
-            </div>
-          </div>
+          )}
+        </div>
         )}
+        <div>
+          {showCart ?
+            <Link href='/cart'><button className='cart' onClick={() => {
+              setShowCart(false);
+            }}>
+              <CgShoppingCart size={22} />
+              <span className='cart-item-qty'>{totalQty}</span> 
+            </button>
+            </Link>
+          : 
+          <Link href='/cart'><button className='cart' onClick={() => setShowCart(true)}> 
+            <CgShoppingCart size={22} />
+            <span className='cart-item-qty'>{totalQty}</span>
+          </button> 
+          </Link>
+          }
+        </div>
       </div>
-      )}
-      </div>
-      {showCart ?
-      <Link href='/cart'>
-        <button className='cart' onClick={() => setShowCart(false)}>   
-          <CgShoppingCart size={22} />
-          <span className='cart-item-qty'>{totalQty}</span> 
-        </button>
-      </Link> 
-      : 
-      <button className='cart' onClick={() => setShowCart(true)}> 
-        <CgShoppingCart size={22} />
-        <span className='cart-item-qty'>{totalQty}</span>
-      </button> 
-      }
-
       <div className='navbar-smallscreen'>
         <RiMenu3Line color='black' fontSize={27} onClick={() => setToggleMenu(true)} />
         {toggleMenu && (

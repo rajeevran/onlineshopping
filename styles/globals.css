@@ -472,7 +472,10 @@ nav input {
   color: #666666;
 }
 .size li:hover {
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  box-shadow: red 0px 7px 29px 0px;
+}
+.size-active{
+  box-shadow: red 0px 7px 29px 0px;
 }
 .quantity-desc {
   display: flex;
@@ -1409,9 +1412,9 @@ footer p, footer li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 30px;
+  padding: 14px -1px;
   background-color: #fff;
-  border-bottom: 1px solid #eee;
+  gap:14px;
 }
 
 .logo {
@@ -1602,7 +1605,7 @@ footer p, footer li {
   padding: 20px;
 }
 
-.content {
+.coming-soon-content {
   width: 80vw;
   text-align: center;
   background: #ffffff;
@@ -1611,7 +1614,7 @@ footer p, footer li {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
 
-.content h1 {
+.coming-soon-content h1 {
   font-size: 42px;
   margin-bottom: 15px;
   color: #222;
@@ -1667,11 +1670,11 @@ footer p, footer li {
 
 /* Responsive */
 @media (max-width: 480px) {
-  .content {
+  .coming-soon-content {
     padding: 35px 25px;
   }
 
-  .content h1 {
+  .coming-soon-content h1 {
     font-size: 34px;
   }
 
