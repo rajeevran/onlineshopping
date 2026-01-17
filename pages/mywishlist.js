@@ -14,14 +14,14 @@ console.log("pathname", pathname);
           <h4>Rrr Tttt</h4>
           <p className="email">rajnanjan505@gmail.com</p>
 
-          <div className="progress">
+          {/* <div className="progress">
             <div className="progress-bar" style={{ width: "66%" }}></div>
           </div>
           <span className="progress-text">66.67% Completed</span>
 
           <a href="#" className="complete-profile">
             Complete profile for better suggestions
-          </a>
+          </a> */}
         </div>
 
         <ul className="menu">

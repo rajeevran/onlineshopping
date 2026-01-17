@@ -33,7 +33,7 @@ const Review = ({ product: { images, name, _id, price }, comment, rating, userId
               <p className='comment'>"{comment}"</p>
               <div className="image-container">
                 <div className='bottom-left-avatar'><Avatar name="Foo Bar" size={40} color="pink" round={true} /></div>
-                <div className="bottom-left-text">{userId.name}</div>
+                <div className="bottom-left-text"></div>
               </div>
             </div>
           </div>

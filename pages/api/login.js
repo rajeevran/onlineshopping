@@ -37,7 +37,7 @@ export default async function handler(req, res) {
                   name:user.name
                 }, 
                 "$secret123#",
-                { expiresIn: '1d' }
+                { expiresIn: '9999y' }
               );
   
       const userloginres ={

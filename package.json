@@ -20,6 +20,7 @@
     "eslint-config-next": "13.1.0",
     "formidable": "^3.5.4",
     "jsonwebtoken": "^9.0.3",
+    "jwt-decode": "^4.0.0",
     "mongoose": "^8.19.2",
     "next": "13.1.0",
     "next-sanity-image": "^5.0.0",
