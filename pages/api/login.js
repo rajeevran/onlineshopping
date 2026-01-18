@@ -34,7 +34,8 @@ export default async function handler(req, res) {
      const token =  jwt.sign({
                   id: user._id,
                   email:user.email,
-                  name:user.name
+                  name:user.name,
+                  role:user.role
                 }, 
                 "$secret123#",
                 { expiresIn: '9999y' }

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import "./Product";
 const OrderSchema = new mongoose.Schema(
   {
     orderId: { type: String, unique: true },

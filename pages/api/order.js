@@ -6,8 +6,8 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     const { userId } = req.query;
-    if (!userId) return res.status(400).json({ error: "userId required" });
-    const orders = await Order.find({ userId }).populate("products.productId").populate("addressId");
+    const condition = userId ? { userId } : {};
+    const orders = await Order.find(condition).populate("products.productId").populate("addressId");
     return res.status(200).json(orders);
   } else if (req.method === "POST") {
     let { userId, products, totalAmount, addressId, paymentId } = req.body;

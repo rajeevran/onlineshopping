@@ -108,120 +108,70 @@ export default function MyAddressPage() {
   };
 
   return (
-    <div className="account-container">
+    <div className="account-container" style={{maxWidth: 900, margin: "40px auto", background: "#fff", borderRadius: 16, boxShadow: "0 2px 16px rgba(0,0,0,0.08)", padding: 32, fontFamily: 'Segoe UI, Arial, sans-serif'}}>
       {/* LEFT SIDEBAR */}
-      <aside className="account-sidebar">
-        <div className="profile-card">
-          <div className="avatar">👤</div>
-          <h4>{users[0]?.firstName} {users[0]?.lastName}</h4>
-          <p className="email">{users[0]?.email}</p>
-
-          {/* <div className="progress">
-            <div className="progress-bar" style={{ width: "66%" }}></div>
-          </div>
-          <span className="progress-text">66.67% Completed</span>
-
-          <a href="#" className="complete-profile">
-            Complete profile for better suggestions
-          </a> */}
+      <aside className="account-sidebar" style={{float: "left", width: 220, marginRight: 32}}>
+        <div className="profile-card" style={{background: "#f7f7fa", borderRadius: 12, padding: 24, textAlign: "center", marginBottom: 24}}>
+          <div className="avatar" style={{fontSize: 48, marginBottom: 8}}>👤</div>
+          <h4 style={{margin: "8px 0", fontWeight: 600}}>{users[0]?.firstName} {users[0]?.lastName}</h4>
+          <p className="email" style={{color: "#888", fontSize: 15}}>{users[0]?.email}</p>
         </div>
-
-        <ul className="menu">
-          <li className={pathname === "/myaccount" ? "active" : ""}
+        <ul className="menu" style={{listStyle: "none", padding: 0, margin: 0}}>
+          <li className={pathname === "/myaccount" ? "active" : ""} style={{padding: "10px 0", cursor: "pointer", fontWeight: pathname === "/myaccount" ? 600 : 400, color: pathname === "/myaccount" ? "#0070f3" : "#333"}}
               onClick={() => router.push("myaccount")}>My Profile</li>
-          <li 
-              className={pathname === "/myorders" ? "active" : ""}
+          <li className={pathname === "/myorders" ? "active" : ""} style={{padding: "10px 0", cursor: "pointer", fontWeight: pathname === "/myorders" ? 600 : 400, color: pathname === "/myorders" ? "#0070f3" : "#333"}}
               onClick={() => router.push("myorders")}>My Orders</li>
-          {/* <li 
-              className={pathname === "/mywishlist" ? "active" : ""}
-              onClick={() => router.push("mywishlist")}>My Wishlist</li> */}
-          <li 
-              className={pathname === "/myaddress" ? "active" : ""}
+          <li className={pathname === "/myaddress" ? "active" : ""} style={{padding: "10px 0", cursor: "pointer", fontWeight: pathname === "/myaddress" ? 600 : 400, color: pathname === "/myaddress" ? "#0070f3" : "#333"}}
               onClick={() => router.push("myaddress")}>My Addresses</li>
-          <li 
-              className={pathname === "/mybank" ? "active" : ""}
+          <li className={pathname === "/mybank" ? "active" : ""} style={{padding: "10px 0", cursor: "pointer", fontWeight: pathname === "/mybank" ? 600 : 400, color: pathname === "/mybank" ? "#0070f3" : "#333"}}
               onClick={() => router.push("mybank")}>My Bank Account</li>
         </ul>
       </aside>
-
       {/* RIGHT CONTENT */}
-
-      <main className="account-content">
-        <h2>MY ADDRESS</h2>
-
-        <button onClick={() => setShowForm((v) => !v)} style={{marginBottom: 16}}>
+      <main className="account-content" style={{overflow: "hidden"}}>
+        <h2 style={{fontWeight: 700, fontSize: 28, marginBottom: 24}}>MY ADDRESS</h2>
+        <button onClick={() => setShowForm((v) => !v)} style={{marginBottom: 16, background: "#0070f3", color: "#fff", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 500}}>
           {showForm ? "Cancel" : "Add New Address"}
         </button>
-
         {showForm && (
-          <form className="address-form" onSubmit={handleFormSubmit} style={{marginBottom: 24, background: '#f9f9f9', padding: 16, borderRadius: 8}}>
-            <div style={{display: 'flex', flexWrap: 'wrap', gap: 12}}>
-              <input
-                name="name"
-                placeholder="Full Name"
-                value={form.name}
-                onChange={handleFormChange}
-                required
-                style={{flex: 1}}
-              />
-              <input
-                name="phone"
-                placeholder="Phone"
-                value={form.phone}
-                onChange={handleFormChange}
-                required
-                style={{flex: 1}}
-              />
-              <input
-                name="street"
-                placeholder="Street Address"
-                value={form.street}
-                onChange={handleFormChange}
-                required
-                style={{flex: 2}}
-              />
-              <input
-                name="city"
-                placeholder="City"
-                value={form.city}
-                onChange={handleFormChange}
-                required
-                style={{flex: 1}}
-              />
-              <input
-                name="state"
-                placeholder="State"
-                value={form.state}
-                onChange={handleFormChange}
-                required
-                style={{flex: 1}}
-              />
-              <input
-                name="pincode"
-                placeholder="Pincode"
-                value={form.pincode}
-                onChange={handleFormChange}
-                required
-                style={{flex: 1}}
-              />
-              <label style={{display: 'flex', alignItems: 'center', gap: 4}}>
-                <input
-                  type="checkbox"
-                  name="isDefault"
-                  checked={form.isDefault}
-                  onChange={handleFormChange}
-                />
-                Set as default
-              </label>
+          <form className="address-form" onSubmit={handleFormSubmit} style={{marginBottom: 24, background: '#f9f9f9', padding: 20, borderRadius: 8}}>
+            <div >
+              <div>
+                <label style={{display: 'block', fontWeight: 500, marginBottom: 6}}>Full Name</label>
+                <input name="name" placeholder="Full Name" value={form.name} onChange={handleFormChange} required style={{width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #ccc'}} />
+              </div>
+              <div>
+                <label style={{display: 'block', fontWeight: 500, marginBottom: 6}}>Phone</label>
+                <input name="phone" placeholder="Phone" value={form.phone} onChange={handleFormChange} required style={{width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #ccc'}} />
+              </div>
+              <div>
+                <label style={{display: 'block', fontWeight: 500, marginBottom: 6}}>Street Address</label>
+                <input name="street" placeholder="Street Address" value={form.street} onChange={handleFormChange} required style={{width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #ccc'}} />
+              </div>
+              <div>
+                <label style={{display: 'block', fontWeight: 500, marginBottom: 6}}>City</label>
+                <input name="city" placeholder="City" value={form.city} onChange={handleFormChange} required style={{width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #ccc'}} />
+              </div>
+              <div>
+                <label style={{display: 'block', fontWeight: 500, marginBottom: 6}}>State</label>
+                <input name="state" placeholder="State" value={form.state} onChange={handleFormChange} required style={{width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #ccc'}} />
+              </div>
+              <div>
+                <label style={{display: 'block', fontWeight: 500, marginBottom: 6}}>Pincode</label>
+                <input name="pincode" placeholder="Pincode" value={form.pincode} onChange={handleFormChange} required style={{width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #ccc'}} />
+              </div>
+              <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                <input type="checkbox" name="isDefault" checked={form.isDefault} onChange={handleFormChange} />
+                <span>Set as default</span>
+              </div>
             </div>
-            <button type="submit" style={{marginTop: 12}}>{editId ? "Update Address" : "Save Address"}</button>
+            <button type="submit" style={{marginTop: 12, background: "#0070f3", color: "#fff", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 500}}>{editId ? "Update Address" : "Save Address"}</button>
           </form>
         )}
-
         {/* List of addresses */}
-        <section className="info-section">
-          <div className="section-header">
-            <h3>Saved Addresses</h3>
+        <section className="info-section" style={{background: '#f7f7fa', borderRadius: 12, padding: 24}}>
+          <div className="section-header" style={{marginBottom: 16}}>
+            <h3 style={{margin: 0, fontWeight: 600}}>Saved Addresses</h3>
           </div>
           {addresses.length === 0 ? (
             <p style={{ color: '#888' }}>No addresses added yet.</p>
@@ -237,10 +187,10 @@ export default function MyAddressPage() {
                   </div>
                   <div style={{ marginTop: 4 }}>{addr.street}, {addr.city}, {addr.state} - {addr.pincode}</div>
                   <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                    <button onClick={() => handleEdit(addr)} style={{ fontSize: 13 }}>Edit</button>
-                    <button onClick={() => handleDelete(addr._id)} style={{ fontSize: 13, color: 'red' }}>Delete</button>
+                    <button onClick={() => handleEdit(addr)} style={{ fontSize: 13, background: '#eee', borderRadius: 6, border: 'none', padding: '4px 12px' }}>Edit</button>
+                    <button onClick={() => handleDelete(addr._id)} style={{ fontSize: 13, color: 'red', background: '#eee', borderRadius: 6, border: 'none', padding: '4px 12px' }}>Delete</button>
                     {!addr.isDefault && (
-                      <button onClick={() => handleSetDefault(addr._id)} style={{ fontSize: 13 }}>Set Default</button>
+                      <button onClick={() => handleSetDefault(addr._id)} style={{ fontSize: 13, background: '#eee', borderRadius: 6, border: 'none', padding: '4px 12px' }}>Set Default</button>
                     )}
                   </div>
                 </div>
@@ -248,7 +198,6 @@ export default function MyAddressPage() {
             </div>
           )}
         </section>
-
       </main>
     </div>
   );

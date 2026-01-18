@@ -39,7 +39,7 @@ export default async function handler(req, res) {
   } else if (req.method === "PUT") {
     const { _id, firstName, lastName, email,dob,phone, passwordHash } = req.body;
     const updateData = { };
-
+     
     if (!_id) {
       return res.status(409).end(`id required`);
     }
@@ -64,6 +64,8 @@ export default async function handler(req, res) {
       updateData.passwordHash = hashedPassword;
     }
     const user = await User.findByIdAndUpdate(_id, updateData, { new: true });
+    console.log('users',user);
+    
     return res.status(200).json(user);
   }else {
     res.setHeader("Allow", ["GET", "POST", "PUT"]);
