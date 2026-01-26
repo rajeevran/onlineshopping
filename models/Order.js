@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import "./Product";
+import "./User";
+import "./Address";
 const OrderSchema = new mongoose.Schema(
   {
     orderId: { type: String, unique: true },

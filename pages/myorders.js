@@ -89,9 +89,9 @@ export default function MyOrdersPage() {
       {/* RIGHT CONTENT */}
       <main className="account-content" style={{overflow: "hidden"}}>
         <h2 style={{fontWeight: 700, fontSize: 28, marginBottom: 24}}>MY ORDERS</h2>
-        <button onClick={() => setShowForm(v => !v)} style={{marginBottom: 16, background: "#0070f3", color: "#fff", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 500}}>
+       {/* <button onClick={() => setShowForm(v => !v)} style={{marginBottom: 16, background: "#0070f3", color: "#fff", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 500}}>
           {showForm ? "Cancel" : "Add New Order"}
-        </button>
+        </button>*/}
         {showForm && (
           <form className="order-form" onSubmit={handleAddOrder} style={{marginBottom: 24, background: '#f9f9f9', padding: 20, borderRadius: 8}}>
             <div style={{display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 20}}>

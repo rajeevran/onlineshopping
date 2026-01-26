@@ -5,9 +5,18 @@ export default async function handler(req, res) {
   await connectToDatabase();
 
   if (req.method === "GET") {
+    const condition ={}
     const { userId } = req.query;
+    const isDefault = req.query.isDefault ;
+    if (userId) {
+      condition.userId = userId;
+    }
+    if (isDefault !== undefined) {
+      condition.isDefault = isDefault;
+    }
+
     if (!userId) return res.status(400).json({ error: "userId required" });
-    const addresses = await Address.find({ userId });
+    const addresses = await Address.find(condition);
     return res.status(200).json(addresses);
   } else if (req.method === "POST") {
     const { userId, name, phone, street, city, state, pincode, isDefault } = req.body;

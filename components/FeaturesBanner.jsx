@@ -2,6 +2,9 @@
 import { useEffect, useState } from "react";
 import Image from 'next/image'
 import Link from 'next/link'
+import { toast } from 'react-hot-toast';
+import { jwtDecode } from "jwt-decode";
+import api from "../lib/axiosInstance";
 const FeaturesBanner =()=> {
   const [products, setProducts] = useState([]);
 
@@ -13,6 +16,20 @@ const FeaturesBanner =()=> {
   }, []);
 
   const handlePayment = async (amount) => {
+
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    const decoded = jwtDecode(token);
+    const userId = decoded.id;
+    const defaultUser =  await api.get(`/users/${userId}`);
+    const defaultAddress =  await api.get(`/address?userId=${userId}&isDefault=true`);
+    console.log('defaultAddress-----',defaultAddress,defaultUser);
+    
+      if(!defaultAddress.data || defaultAddress.data.length===0){
+        toast.error('Please set default address before placing order');
+        return;
+    }
+
     const res = await fetch("/api/razorpay", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -28,14 +45,32 @@ const FeaturesBanner =()=> {
       name: "My Shop",
       description: "Test Payment",
       order_id: order.id,
-      handler: function (response) {
-        alert("Payment successful! 🎉");
-        console.log(response);
+      handler: async function (response) {
+        try {
+          const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+          const paymentId = response.razorpay_payment_id;
+          const orderId = response.razorpay_order_id
+          const productsPayload = [{
+            productId: products[0]._id,
+            quantity: 1,
+            price: products[0].price
+          }];
+          toast.success('Payment successful! 🎉');
+          const defaultAddressId =  defaultAddress.data[0]?._id || '';
+          await fetch('/api/order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ products: productsPayload, totalAmount: amount, addressId: defaultAddressId, orderId, paymentId }),
+          });
+         window.location.href = "/myorders";
+        } catch (err) {
+          console.error('Failed to create order after payment', err);
+        }
       },
       prefill: {
-        name: "John Doe",
-        email: "john@example.com",
-        contact: "9999999999",
+        name: defaultUser.data.firstName + ' ' + defaultUser.data.lastName,
+        email: defaultUser.data.email,
+        contact: defaultUser.data.phone,
       },
       theme: {
         color: "#3399cc",
@@ -44,6 +79,7 @@ const FeaturesBanner =()=> {
 
     const razor = new window.Razorpay(options);
     razor.open();
+ 
   };
 
   if (!products.length) return <p style={{ padding: 20 }}>No products found.</p>;
