@@ -91,6 +91,16 @@ export const StateContext = ({ children }) => {
       await onGetCartItems()
   }
 
+    const onRemoveAll = async() => {
+      await fetch("/api/cart/remove", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization":`Bearer ${token}` },
+      });
+      await onGetCartItems()
+      setTotalQty(0);
+      setTotalPrice(0);
+  }
+
   const toggleCartItemQuantity = async(id, value) => {
     foundProduct = cartItems.find((item) => item._id === id)
     index = cartItems.findIndex((product) => product._id === id);
@@ -140,6 +150,7 @@ export const StateContext = ({ children }) => {
         onGetCartItems,
         toggleCartItemQuantity,
         onRemove,
+        onRemoveAll,
         setTotalPrice,
         setTotalQty 
       }}

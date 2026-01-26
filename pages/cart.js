@@ -58,7 +58,20 @@ const Cart = () => {
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify({ products: productsPayload, totalAmount: amount, addressId: defaultAddressId, orderId, paymentId }),
           });
+          // const deleteCartItems = async (product, quantity) => {
+          //   await onRemove(product, quantity);
+          // }
+          // for (let index = 0; index < cartItems.length; index++) {
+          //   const item = cartItems[index];
+          //   deleteCartItems(item?.product,item.quantity)
+          // }
+          await fetch("/api/cart/removeAll", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization":`Bearer ${token}` }
+          })
+          await onGetCartItems();
          window.location.href = "/myorders";
+         
 
         } catch (err) {
           console.error('Failed to create order after payment', err);
