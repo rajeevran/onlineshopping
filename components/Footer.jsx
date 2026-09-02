@@ -35,7 +35,7 @@ const Footer = () => {
           </ul>
         </div>
         <div className='footer-links'>
-          <h3>Red Kurti Brand</h3>
+          <h3>Noadua Brand</h3>
           <ul>
             <li>About Us</li>
             <li>Investor Information</li>

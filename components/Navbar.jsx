@@ -2,7 +2,7 @@ import React, { useState,useEffect, useRef } from 'react'
 import Image from 'next/image'
 import {CiSearch} from 'react-icons/ci'
 import {CgShoppingCart} from 'react-icons/cg'
-import logo from '../src/assets/Logo.png'
+import Logo from '../src/assets/Logo.png'
 import Link from 'next/link'
 import {RiMenu3Line, RiCloseLine } from 'react-icons/ri';
 import { useStateContext } from '../context/StateContext';
@@ -52,7 +52,7 @@ const Navbar = ({Searchproducts}) => {
   return (
     <nav>
       <Link href='/'>
-        <Image src={logo} width={140} height={25} alt='logo' />
+        <Image src={'/Logo.png'} width={170} height={70} alt='logo' />
       </Link>
       <ul className='nav-links'>
         {/* <Link href='/kurti'><li>Kurti</li></Link> */}
