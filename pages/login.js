@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -55,6 +56,17 @@ export default function Login() {
         <button type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
+        <div className="divideror">
+          <span>OR</span>
+        </div>
+
+      <div className="signupSection">
+        <p>Don't have an account?</p>
+
+        <Link href="/signup" className="createAccountBtn">
+          Create an Account
+        </Link>
+      </div>
       </form>
     </div>
   );
