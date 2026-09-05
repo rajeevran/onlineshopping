@@ -2044,6 +2044,8 @@ body {
   width: 190px !important;
   height: auto !important;
   object-fit: contain;
+  border-radius:90px;
+
 }
 
 .desktop-nav-links {

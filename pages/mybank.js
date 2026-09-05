@@ -129,9 +129,9 @@ export default function MyBankPage() {
               <span>{users[0]?.firstName || "Account"}</span>
             </div>
           </div>
-        <button onClick={() => { setShowForm(v => !v); setEditId(null); setForm({ accountHolder: "", bankName: "", accountNumber: "", ifsc: "", isDefault: false }); }} style={{marginBottom: 16, background: "#0070f3", color: "#fff", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 500}}>
-          {showForm ? "Cancel" : "Add New Bank Account"}
-        </button>
+        <span className="account-eyebrow" onClick={() => { setShowForm(v => !v); setEditId(null); setForm({ accountHolder: "", bankName: "", accountNumber: "", ifsc: "", isDefault: false }); }} >
+          {showForm ? "Cancel" : "+ Add Bank Account"}
+        </span>
         {showForm && (
           <form className="bank-form" onSubmit={handleFormSubmit} style={{marginBottom: 24, background: '#f9f9f9', padding: 20, borderRadius: 8}}>
             <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20}}>
@@ -156,7 +156,12 @@ export default function MyBankPage() {
                 <span>Set as default</span>
               </div>
             </div>
-            <button type="submit" style={{marginTop: 12, background: "#0070f3", color: "#fff", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 500}}>{editId ? "Update Bank Account" : "Save Bank Account"}</button>
+            <div style={{display: 'flex', alignItems: 'center', gap: 8, marginTop: 16}}>
+
+              <button type="submit" className="primary-btn">
+              {editId ? "Update Bank Account" : "Save Bank Account"}
+              </button>
+            </div>
           </form>
         )}
         {/* List of bank accounts */}
@@ -178,10 +183,10 @@ export default function MyBankPage() {
                   </div>
                   <div style={{ marginTop: 4 }}>A/C: ****{bank.accountNumber?.slice(-4)} | IFSC: {bank.ifsc}</div>
                   <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                    <button onClick={() => handleEdit(bank)} style={{ fontSize: 13, background: '#eee', borderRadius: 6, border: 'none', padding: '4px 12px' }}>Edit</button>
-                    <button onClick={() => handleDelete(bank._id)} style={{ fontSize: 13, color: 'red', background: '#eee', borderRadius: 6, border: 'none', padding: '4px 12px' }}>Delete</button>
+                    <button onClick={() => handleEdit(bank)} className="primary-btn">Edit</button>
+                    <button onClick={() => handleDelete(bank._id)} className="secondary-btn">Delete</button>
                     {!bank.isDefault && (
-                      <button onClick={() => handleSetDefault(bank._id)} style={{ fontSize: 13, background: '#eee', borderRadius: 6, border: 'none', padding: '4px 12px' }}>Set Default</button>
+                      <button onClick={() => handleSetDefault(bank._id)} className="secondary-btn">Set Default</button>
                     )}
                   </div>
                 </div>

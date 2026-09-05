@@ -88,7 +88,7 @@ const Navbar = () => {
           {!isLoggedIn ? (
             <button className="modern-account-btn" onClick={() => router.push('/login')}>
               <FiUser size={20} />
-              <span>My Account</span>
+              <span>Login</span>
               <FiChevronDown size={16} />
             </button>
           ) : (
@@ -102,7 +102,7 @@ const Navbar = () => {
                 <div className="dropdown modern-dropdown">
                   <button onClick={() => { setOpen(false); router.push('/myaccount') }}>My Account</button>
                   <button onClick={() => { setOpen(false); router.push('/myorders') }}>My Orders</button>
-                  <button onClick={() => { setOpen(false); router.push('/mywishlist') }}>My Wishlist</button>
+                  {/* <button onClick={() => { setOpen(false); router.push('/mywishlist') }}>My Wishlist</button> */}
                   <button onClick={() => { setOpen(false); router.push('/myaddress') }}>My Address</button>
                   <button onClick={() => { setOpen(false); router.push('/mybank') }}>My Bank Account</button>
                   <button onClick={handleLogout}>Logout</button>

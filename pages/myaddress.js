@@ -143,12 +143,13 @@ export default function MyAddressPage() {
               <span>{users[0]?.firstName || "Account"}</span>
             </div>
           </div>
-        <button onClick={() => setShowForm((v) => !v)} style={{marginBottom: 16, background: "#0070f3", color: "#fff", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 500}}>
-          {showForm ? "Cancel" : "Add New Address"}
-        </button>
+        <span className="account-eyebrow" onClick={() => setShowForm((v) => !v)}   >
+          {showForm ? "Cancel" : "+ Add Address"}
+        </span>
         {showForm && (
-          <form className="address-form" onSubmit={handleFormSubmit} style={{marginBottom: 24, background: '#f9f9f9', padding: 20, borderRadius: 8}}>
-            <div >
+          <>
+            <form className="bank-form" onSubmit={handleFormSubmit} style={{marginBottom: 24, background: '#f9f9f9', padding: 20, borderRadius: 8}}>
+            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20}}>
               <div>
                 <label style={{display: 'block', fontWeight: 500, marginBottom: 6}}>Full Name</label>
                 <input name="name" placeholder="Full Name" value={form.name} onChange={handleFormChange} required style={{width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #ccc'}} />
@@ -173,13 +174,21 @@ export default function MyAddressPage() {
                 <label style={{display: 'block', fontWeight: 500, marginBottom: 6}}>Pincode</label>
                 <input name="pincode" placeholder="Pincode" value={form.pincode} onChange={handleFormChange} required style={{width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #ccc'}} />
               </div>
+              
               <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
                 <input type="checkbox" name="isDefault" checked={form.isDefault} onChange={handleFormChange} />
                 <span>Set as default</span>
               </div>
+
+
             </div>
-            <button type="submit" style={{marginTop: 12, background: "#0070f3", color: "#fff", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 500}}>{editId ? "Update Address" : "Save Address"}</button>
+
+            <div style={{display: 'flex', alignItems: 'center', gap: 8, marginTop: 16}}>
+              <button type="submit" className="primary-btn">{editId ? "Update Address" : "Save Address"}</button>
+            </div>
           </form>
+          </>
+
         )}
         {/* List of addresses */}
           <section className="account-section">
@@ -200,10 +209,10 @@ export default function MyAddressPage() {
                   </div>
                   <div style={{ marginTop: 4 }}>{addr.street}, {addr.city}, {addr.state} - {addr.pincode}</div>
                   <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                    <button onClick={() => handleEdit(addr)} style={{ fontSize: 13, background: '#eee', borderRadius: 6, border: 'none', padding: '4px 12px' }}>Edit</button>
-                    <button onClick={() => handleDelete(addr._id)} style={{ fontSize: 13, color: 'red', background: '#eee', borderRadius: 6, border: 'none', padding: '4px 12px' }}>Delete</button>
+                    <button onClick={() => handleEdit(addr)} className="primary-btn">Edit</button>
+                    <button onClick={() => handleDelete(addr._id)} className="secondary-btn">Delete</button>
                     {!addr.isDefault && (
-                      <button onClick={() => handleSetDefault(addr._id)} style={{ fontSize: 13, background: '#eee', borderRadius: 6, border: 'none', padding: '4px 12px' }}>Set Default</button>
+                      <button onClick={() => handleSetDefault(addr._id)} className="secondary-btn">Set Default</button>
                     )}
                   </div>
                 </div>
