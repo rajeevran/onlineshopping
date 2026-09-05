@@ -28,7 +28,6 @@ const HeroBanner = () => {
   }, [])
 
   const slides = products.length ? products : fallbackSlides
-console.log('slides-----------',slides);
 
   return (
     <section className="modern-hero-section" aria-label="Featured collection">

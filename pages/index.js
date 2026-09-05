@@ -1,252 +1,177 @@
 import React, { useEffect, useState } from 'react'
-import {client} from '../lib/client'
-import { HeroBanner, EventsBanner, Newsletter, FeaturesBanner, Product } from '../components'
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { client } from '../lib/client'
+import { HeroBanner, Newsletter, FeaturesBanner, Product } from '../components'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Navigation, A11y } from 'swiper/modules'
+import Review from '../components/Review'
 
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
+import 'swiper/css'
+import 'swiper/css/navigation'
 
+const HomeProductCarousel = ({
+  eyebrow,
+  title,
+  products = [],
+  type = 'product',
+}) => {
+  const items = Array.isArray(products) ? products : []
 
-// import required modules
-import { Navigation,A11y } from 'swiper/modules';
-import Review from '../components/Review';
+  if (!items.length) return null
 
-const Home = ({products}) => {
-    const [festiveWave, setFestiveWave] = useState([]);
-    const [recommendedProduct, setRecommendedProduct] = useState([]);
-    const [customerReview, setCustomerReview] = useState([]);
-    const [recentlyViewed, setRecentlyViewed] = useState([]);
-    const [exploreCollection, setExploreCollection] = useState([]);
-    useEffect(() => {
-
-      fetch("/api/festiveWave")
-        .then((res) => res.json())
-        .then((data) => setFestiveWave(data));
-
-      fetch("/api/recommendedProduct")
-        .then((res) => res.json())
-        .then((data) => setRecommendedProduct(data));
-        
-      fetch("/api/customerReview")
-        .then((res) => res.json())
-        .then((data) => setCustomerReview(data));
-        
-      fetch("/api/recentlyViewed")
-        .then((res) => res.json())
-        .then((data) => setRecentlyViewed(data));
-        
-      fetch("/api/exploreCollection")
-        .then((res) => res.json())
-        .then((data) => setExploreCollection(data));
-
-    }, []);
-    console.log('festiveWave',festiveWave);
-    
   return (
-    <>
+    <section className="home-products-section">
+      <div className="home-products-header">
+        <div className="home-products-heading">
+          {eyebrow && <span>{eyebrow}</span>}
+          <h4>{title}</h4>
+        </div>
+      </div>
+
+      <div className="home-products-slider-wrap">
+        <Swiper
+          modules={[Navigation, A11y]}
+          navigation
+          a11y={{ enabled: true }}
+          watchOverflow
+          observer
+          observeParents
+          spaceBetween={18}
+          slidesPerView={1.15}
+          breakpoints={{
+            480: {
+              slidesPerView: 1.45,
+              spaceBetween: 18,
+            },
+            640: {
+              slidesPerView: 2,
+              spaceBetween: 20,
+            },
+            900: {
+              slidesPerView: 2.5,
+              spaceBetween: 22,
+            },
+            1100: {
+              slidesPerView: 3,
+              spaceBetween: 24,
+            },
+            1400: {
+              slidesPerView: 4,
+              spaceBetween: 24,
+            },
+          }}
+          className="modern-products-swiper"
+        >
+          {items.map((item, index) => {
+            const key = item?._id || item?.productId?._id || `${title}-${index}`
+
+            return (
+              <SwiperSlide key={key} className="modern-product-slide">
+                {type === 'review' ? (
+                  <Review
+                    userId={item.userId}
+                    comment={item.comment}
+                    rating={item.rating}
+                    product={item.productId}
+                  />
+                ) : (
+                  <Product product={item} />
+                )}
+              </SwiperSlide>
+            )
+          })}
+        </Swiper>
+      </div>
+    </section>
+  )
+}
+
+const getProductIds = (data) => {
+  if (!Array.isArray(data) || !data.length || !Array.isArray(data[0]?.productId)) {
+    return []
+  }
+
+  return data[0].productId.filter(Boolean)
+}
+
+const Home = ({ products }) => {
+  const [festiveWave, setFestiveWave] = useState([])
+  const [recommendedProduct, setRecommendedProduct] = useState([])
+  const [customerReview, setCustomerReview] = useState([])
+  const [recentlyViewed, setRecentlyViewed] = useState([])
+  const [exploreCollection, setExploreCollection] = useState([])
+
+  useEffect(() => {
+    const loadHomeSections = async () => {
+      try {
+        const [festive, recommended, reviews, recent, explore] = await Promise.all([
+          fetch('/api/festiveWave').then((res) => res.json()),
+          fetch('/api/recommendedProduct').then((res) => res.json()),
+          fetch('/api/customerReview').then((res) => res.json()),
+          fetch('/api/recentlyViewed').then((res) => res.json()),
+          fetch('/api/exploreCollection').then((res) => res.json()),
+        ])
+
+        setFestiveWave(festive)
+        setRecommendedProduct(recommended)
+        setCustomerReview(reviews)
+        setRecentlyViewed(recent)
+        setExploreCollection(explore)
+      } catch (error) {
+        console.error('Failed to load homepage sections:', error)
+      }
+    }
+
+    loadHomeSections()
+  }, [])
+
+  return (
+    <main className="modern-homepage">
       <HeroBanner />
-      <div className='products-outer-container'>
-        <Swiper
-          breakpoints={{
-              // width >= 300
-              300: {
-                slidesPerView: 1,
-                spaceBetween: 100
-              },
-              // width >= 1000
-              1000: {
-                slidesPerView: 2,
-                spaceBetween: 0
-              },
-              // width >= 1260
-              1260: {
-                slidesPerView: 3,
-                spaceBetween: 0
-              }
-          }}
-          modules={[Navigation, A11y]}
-          spaceBetween={0}
-          slidesPerView={3}
-          navigation
-        >
-          <div className='products-container'>
-            {festiveWave && festiveWave.length>0 &&  festiveWave[0].productId.length>0 && festiveWave[0].productId?.map(product => (
-              <SwiperSlide>
-                <Product key={product._id} product={product} />
-              </SwiperSlide>
-            ))}
-          </div>
-        </Swiper>
-      </div>
-      <div className='products-outer-container'>
-        <div className='subtitle'>
-          {/* <span>PRODUCTS</span> */}
-          <h1>RECOMMENDED FOR YOU</h1>
-        </div>
-        <Swiper
-          breakpoints={{
-              // width >= 300
-              300: {
-                slidesPerView: 1,
-                spaceBetween: 100
-              },
-              // width >= 1000
-              1000: {
-                slidesPerView: 2,
-                spaceBetween: 0
-              },
-              // width >= 1260
-              1260: {
-                slidesPerView: 3,
-                spaceBetween: 0
-              }
-          }}
-          
-          modules={[Navigation, A11y]}
-          spaceBetween={0}
-          slidesPerView={3}
-          navigation
-        >
-          <div className='products-container'>
-         {recommendedProduct && recommendedProduct.length>0 &&  recommendedProduct[0].productId.length>0 && recommendedProduct[0].productId?.map(product => (
-              <SwiperSlide>
-                <Product key={product._id} product={product} />
-              </SwiperSlide>
-            ))}
-          </div>
-        </Swiper>
-      </div>
 
-      <FeaturesBanner />
-      
-      <div className='products-outer-container'>
-        <div className='subtitle'>
-          {/* <span>PRODUCTS</span> */}
-          <h1>EXPLORE COLLECTION</h1>
-        </div>
-        <Swiper
-          breakpoints={{
-              // width >= 300
-              300: {
-                slidesPerView: 1,
-                spaceBetween: 100
-              },
-              // width >= 1000
-              1000: {
-                slidesPerView: 2,
-                spaceBetween: 0
-              },
-              // width >= 1260
-              1260: {
-                slidesPerView: 3,
-                spaceBetween: 0
-              }
-          }}
-          modules={[Navigation, A11y]}
-          spaceBetween={0}
-          slidesPerView={3}
-          navigation
-        >
-          <div className='products-container'>
-          {exploreCollection && exploreCollection.length>0 &&  exploreCollection[0].productId.length>0 && exploreCollection[0].productId?.map(product => (
-              <SwiperSlide>
-                <Product key={product._id} product={product} />
-              </SwiperSlide>
-            ))}
-          </div>
-        </Swiper>
-      </div>
+      <HomeProductCarousel
+        eyebrow="FESTIVE EDIT"
+        title="FESTIVE WAVE"
+        products={getProductIds(festiveWave)}
+      />
 
+      <HomeProductCarousel
+        eyebrow="CURATED FOR YOU"
+        title="RECOMMENDED FOR YOU"
+        products={getProductIds(recommendedProduct)}
+      />
 
-      <div className='products-outer-container'>
-        <div className='subtitle'>
-          {/* <span>PRODUCTS</span> */}
-          <h1>RECENTLY VIEWED</h1>
-        </div>
-        <Swiper
-          breakpoints={{
-              // width >= 300
-              300: {
-                slidesPerView: 1,
-                spaceBetween: 100
-              },
-              // width >= 1000
-              1000: {
-                slidesPerView: 2,
-                spaceBetween: 0
-              },
-              // width >= 1260
-              1260: {
-                slidesPerView: 3,
-                spaceBetween: 0
-              }
-          }}
-          modules={[Navigation, A11y]}
-          spaceBetween={0}
-          slidesPerView={3}
-          navigation
-        >
-          <div className='products-container'>
-           {recentlyViewed && recentlyViewed.length>0 &&  recentlyViewed[0].productId.length>0 && recentlyViewed[0].productId?.map(product => (
-              <SwiperSlide>
-                <Product key={product._id} product={product} />
-              </SwiperSlide>
-            ))}
-          </div>
-        </Swiper>
-      </div>
-      
-      <div className='products-outer-container'>
-        <div className='subtitle'>
-          {/* <span>PRODUCTS</span> */}
-          <h1>CUSTOMER REVIEWS</h1>
-        </div>
-        <Swiper
-          breakpoints={{
-              // width >= 300
-              300: {
-                slidesPerView: 1,
-                spaceBetween: 100
-              },
-              // width >= 1000
-              1000: {
-                slidesPerView: 2,
-                spaceBetween: 0
-              },
-              // width >= 1260
-              1260: {
-                slidesPerView: 3,
-                spaceBetween: 0
-              }
-          }}
-          modules={[Navigation, A11y]}
-          spaceBetween={0}
-          slidesPerView={3}
-          navigation
-        >
-          <div className='products-container'>
-            {customerReview && customerReview.length>0 && customerReview?.map(product => (
-              <SwiperSlide>
-                 <Review key={product.productId._id}  userId={product.userId} comment={product.comment} rating={product.rating} product={product.productId} /> 
-              </SwiperSlide>
-            ))}
-          </div>
-        </Swiper>
-      </div>
+      {/* <FeaturesBanner /> */}
+
+      <HomeProductCarousel
+        eyebrow="SIGNATURE STYLES"
+        title="EXPLORE COLLECTION"
+        products={getProductIds(exploreCollection)}
+      />
+
+      <HomeProductCarousel
+        eyebrow="YOUR RECENT PICKS"
+        title="RECENTLY VIEWED"
+        products={getProductIds(recentlyViewed)}
+      />
+
+      <HomeProductCarousel
+        eyebrow="WHAT OUR CUSTOMERS SAY"
+        title="CUSTOMER REVIEWS"
+        products={customerReview}
+        type="review"
+      />
+
       <Newsletter />
-    </>
+    </main>
   )
 }
 
 export const getServerSideProps = async () => {
-  const query = '*[_type == "product"]';
-  const products = await client.fetch(query);
-  // const bannerQuery = '*[_type == "banner"]';
-  // const bannerData = await client.fetch(bannerQuery);
+  const query = '*[_type == "product"]'
+  const products = await client.fetch(query)
 
   return {
-    props: { products }
+    props: { products },
   }
 }
 

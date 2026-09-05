@@ -186,8 +186,7 @@ export default function Signup() {
           value={formData.confirmPassword}
           onChange={handleChange}
         />
-
-        <button disabled={loading}>
+        <button className="primary-btn" disabled={loading}>
           {loading ? "Creating..." : "Sign Up"}
         </button>
 

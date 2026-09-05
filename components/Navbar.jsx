@@ -41,6 +41,13 @@ const Navbar = () => {
     setOpen(false)
     router.push('/login')
   }
+  const handleMobileLogout = () => {
+    localStorage.removeItem('token')
+    setIsLoggedIn(false)
+    setOpen(false)
+    setToggleMenu(false)
+    router.push('/login')
+  }
 
   const handleSearch = (event) => {
     event.preventDefault()
@@ -152,6 +159,9 @@ const Navbar = () => {
           <div className="mobile-nav-bottom">
             <Link href="/cart" onClick={closeMobileMenu}>Cart ({totalQty || 0})</Link>
             <Link href={isLoggedIn ? '/myaccount' : '/login'} onClick={closeMobileMenu}>My Account</Link>
+          </div>
+          <div className="mobile-nav-logout">
+            <Link href={'/login'} onClick={handleMobileLogout}>Logout</Link>
           </div>
         </div>
       )}

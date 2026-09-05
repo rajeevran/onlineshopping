@@ -53,7 +53,7 @@ export default function Login() {
           required
         />
 
-        <button type="submit" disabled={loading}>
+        <button className="primary-btn" type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
         <div className="divideror">
@@ -62,10 +62,11 @@ export default function Login() {
 
       <div className="signupSection">
         <p>Don't have an account?</p>
-
-        <Link href="/signup" className="createAccountBtn">
-          Create an Account
-        </Link>
+        <button className="primary-btn">
+          <Link href="/signup">
+            Create an Account
+          </Link>
+        </button>
       </div>
       </form>
     </div>
