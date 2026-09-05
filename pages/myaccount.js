@@ -109,137 +109,178 @@ export default function MyAccountPage() {
   };
 
   return (
-    <div className="account-container" style={{maxWidth: 900, margin: "40px auto", background: "#fff", borderRadius: 16, boxShadow: "0 2px 16px rgba(0,0,0,0.08)", padding: 32, fontFamily: 'Segoe UI, Arial, sans-serif'}}>
-      {/* LEFT SIDEBAR */}
-      <aside className="account-sidebar" style={{float: "left", width: 220, marginRight: 32}}>
-        <div className="profile-card" style={{background: "#f7f7fa", borderRadius: 12, padding: 24, textAlign: "center", marginBottom: 24}}>
-          <div className="avatar" style={{fontSize: 48, marginBottom: 8}}>👤</div>
-          <h4 style={{margin: "8px 0", fontWeight: 600}}>{users[0]?.firstName} {users[0]?.lastName}</h4>
-          <p className="email" style={{color: "#888", fontSize: 15}}>{users[0]?.email}</p>
-        </div>
-        <ul className="menu" style={{listStyle: "none", padding: 0, margin: 0}}>
-          <li className={pathname === "/myaccount" ? "active" : ""} style={{padding: "10px 0", cursor: "pointer", fontWeight: pathname === "/myaccount" ? 600 : 400, color: pathname === "/myaccount" ? "#0070f3" : "#333"}}
-              onClick={() => router.push("myaccount")}>My Profile</li>
-          <li className={pathname === "/myorders" ? "active" : ""} style={{padding: "10px 0", cursor: "pointer", fontWeight: pathname === "/myorders" ? 600 : 400, color: pathname === "/myorders" ? "#0070f3" : "#333"}}
-              onClick={() => router.push("myorders")}>My Orders</li>
-          {/* <li className={pathname === "/mywishlist" ? "active" : ""} style={{padding: "10px 0", cursor: "pointer", fontWeight: pathname === "/mywishlist" ? 600 : 400, color: pathname === "/mywishlist" ? "#0070f3" : "#333"}}
-              onClick={() => router.push("mywishlist")}>My Wishlist</li> */}
-          <li className={pathname === "/myaddress" ? "active" : ""} style={{padding: "10px 0", cursor: "pointer", fontWeight: pathname === "/myaddress" ? 600 : 400, color: pathname === "/myaddress" ? "#0070f3" : "#333"}}
-              onClick={() => router.push("myaddress")}>My Addresses</li>
-          <li className={pathname === "/mybank" ? "active" : ""} style={{padding: "10px 0", cursor: "pointer", fontWeight: pathname === "/mybank" ? 600 : 400, color: pathname === "/mybank" ? "#0070f3" : "#333"}}
-              onClick={() => router.push("mybank")}>My Bank Account</li>
-        </ul>
-      </aside>
-      {/* RIGHT CONTENT */}
-      <main className="account-content" style={{overflow: "hidden"}}>
-        <h2 style={{fontWeight: 700, fontSize: 28, marginBottom: 24}}>MY PROFILE</h2>
-        {message && (
-          <div style={{ color: message.includes("success") ? "green" : "red", marginBottom: 10 }}>{message}</div>
-        )}
-        {/* BASIC INFO */}
-        <section className="info-section" style={{background: "#f7f7fa", borderRadius: 12, padding: 24, marginBottom: 24}}>
-          <div className="section-header" style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16}}>
-            <h3 style={{margin: 0, fontWeight: 600}}>BASIC INFORMATION</h3>
-            {!editMode && <span className="edit" style={{cursor: "pointer", color: "#0070f3", fontWeight: 500}} onClick={handleEditClick}>Edit</span>}
+    <div className="account-page">
+      <div className="account-container">
+        <aside className="account-sidebar">
+          <div className="profile-card">
+            <div className="avatar">👤</div>
+            <h4>{users[0]?.firstName || "My"} {users[0]?.lastName || "Account"}</h4>
+            <p className="email">{users[0]?.email || ""}</p>
           </div>
-          {!editMode ? (
-            <div className="info-grid" style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20}}>
-              <div>
-                <label>First Name</label>
-                <p>{users[0]?.firstName}</p>
-              </div>
-              <div>
-                <label>Last Name</label>
-                <p>{users[0]?.lastName}</p>
-              </div>
-              <div>
-                <label>Email</label>
-                <p><strong>{users[0]?.email}</strong></p>
-              </div>
-              <div>
-                <label>Gender</label>
-                <p>{users[0]?.gender}</p>
-              </div>
-              <div>
-                <label>Date of Birth</label>
-                <p>{users[0]?.dob ? new Date(users[0]?.dob).toLocaleDateString("en-GB") : ""}</p>
-              </div>
-            </div>
-          ) : (
-            <form className="info-grid" onSubmit={handleFormSubmit} style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20}}>
-              <div>
-                <label style={{display: "block", fontWeight: 500, marginBottom: 6}}>First Name</label>
-                <input type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} required style={{width: "100%", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc"}} />
-              </div>
-              <div>
-                <label style={{display: "block", fontWeight: 500, marginBottom: 6}}>Last Name</label>
-                <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} required style={{width: "100%", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc"}} />
-              </div>
-              <div>
-                <label style={{display: "block", fontWeight: 500, marginBottom: 6}}>Email</label>
-                <input type="email" name="email" value={formData.email} onChange={handleInputChange} required style={{width: "100%", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc"}} />
-              </div>
-              <div>
-                <label style={{display: "block", fontWeight: 500, marginBottom: 6}}>Gender</label>
-                <select name="gender" value={formData.gender} onChange={handleInputChange} required style={{width: "100%", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc"}}>
-                  <option value="">Select</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div>
-                <label style={{display: "block", fontWeight: 500, marginBottom: 6}}>Date of Birth</label>
-                <input type="date" name="dob" value={formData.dob} onChange={handleInputChange} required style={{width: "100%", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc"}} />
-              </div>
-              <div style={{gridColumn: "1 / -1", textAlign: "right"}}>
-                <button type="submit" disabled={loading} style={{marginRight: 8, background: "#0070f3", color: "#fff", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 500}}>Save</button>
-                <button type="button" onClick={() => setEditMode(false)} disabled={loading} style={{background: "#eee", color: "#333", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 500}}>Cancel</button>
-              </div>
-            </form>
-          )}
-        </section>
-        {/* CONTACT INFO */}
-        <section className="info-section" style={{background: "#f7f7fa", borderRadius: 12, padding: 24}}>
-          <div className="section-header" style={{marginBottom: 16}}>
-            <h3 style={{margin: 0, fontWeight: 600}}>CONTACT INFORMATION</h3>
-          </div>
-          <div className="info-grid" style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20}}>
+
+          <nav className="account-menu" aria-label="Account navigation">
+            <button className={pathname === "/myaccount" ? "active" : ""} onClick={() => router.push("/myaccount")}>
+              <span>👤</span><span>My Profile</span>
+            </button>
+            <button className={pathname === "/myorders" ? "active" : ""} onClick={() => router.push("/myorders")}>
+              <span>📦</span><span>My Orders</span>
+            </button>
+            <button className={pathname === "/myaddress" ? "active" : ""} onClick={() => router.push("/myaddress")}>
+              <span>📍</span><span>My Addresses</span>
+            </button>
+            <button className={pathname === "/mybank" ? "active" : ""} onClick={() => router.push("/mybank")}>
+              <span>🏦</span><span>My Bank Account</span>
+            </button>
+          </nav>
+        </aside>
+
+        <main className="account-content">
+          <div className="account-title-row">
             <div>
-              <label>Mobile Number</label>
-              {!editMode ? (
-                <p>+91 {users[0]?.phone}</p>
-              ) : (
-                <input style={{width: "100%", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc"}} type="text" name="phone" value={formData.phone} onChange={handleInputChange} required />
+              <p className="account-eyebrow">MY ACCOUNT</p>
+              <h4>My Profile</h4>
+            </div>
+            <div className="account-user-mobile">
+              <div className="mobile-avatar">👤</div>
+              <span>{users[0]?.firstName || "Account"}</span>
+            </div>
+          </div>
+
+          {message && (
+            <div className={`account-message ${message.includes("success") ? "success" : "error"}`}>
+              {message}
+            </div>
+          )}
+
+          <section className="account-section">
+            <div className="section-header">
+              <div>
+                <p className="section-kicker">PERSONAL DETAILS</p>
+                <h2>Basic Information</h2>
+              </div>
+              {!editMode && (
+                <button type="button" className="text-edit" onClick={handleEditClick}>Edit</button>
               )}
             </div>
+
+            {!editMode ? (
+              <div className="profile-grid">
+                <div className="profile-field">
+                  <label>First Name</label>
+                  <p>{users[0]?.firstName || "—"}</p>
+                </div>
+                <div className="profile-field">
+                  <label>Last Name</label>
+                  <p>{users[0]?.lastName || "—"}</p>
+                </div>
+                <div className="profile-field">
+                  <label>Email Address</label>
+                  <p>{users[0]?.email || "—"}</p>
+                </div>
+                <div className="profile-field">
+                  <label>Gender</label>
+                  <p>{users[0]?.gender || "—"}</p>
+                </div>
+                <div className="profile-field">
+                  <label>Date of Birth</label>
+                  <p>{users[0]?.dob ? new Date(users[0].dob).toLocaleDateString("en-GB") : "—"}</p>
+                </div>
+              </div>
+            ) : (
+              <form className="profile-grid edit-grid" onSubmit={handleFormSubmit}>
+                <div className="profile-field">
+                  <label htmlFor="firstName">First Name</label>
+                  <input id="firstName" type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} required />
+                </div>
+                <div className="profile-field">
+                  <label htmlFor="lastName">Last Name</label>
+                  <input id="lastName" type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} required />
+                </div>
+                <div className="profile-field">
+                  <label htmlFor="email">Email Address</label>
+                  <input id="email" type="email" name="email" value={formData.email} onChange={handleInputChange} required />
+                </div>
+                <div className="profile-field">
+                  <label htmlFor="gender">Gender</label>
+                  <select id="gender" name="gender" value={formData.gender} onChange={handleInputChange} required>
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div className="profile-field">
+                  <label htmlFor="dob">Date of Birth</label>
+                  <input id="dob" type="date" name="dob" value={formData.dob} onChange={handleInputChange} required />
+                </div>
+                <div className="profile-actions">
+                  <button type="button" className="secondary-btn" onClick={() => setEditMode(false)} disabled={loading}>Cancel</button>
+                  <button type="submit" className="primary-btn" disabled={loading}>{loading ? "Saving..." : "Save Changes"}</button>
+                </div>
+              </form>
+            )}
+          </section>
+
+          <section className="account-section">
+            <div className="section-header">
+              <div>
+                <p className="section-kicker">SECURITY & CONTACT</p>
+                <h2>Contact Information</h2>
+              </div>
+            </div>
+
+            <div className="profile-grid">
+              <div className="profile-field">
+                <label>Mobile Number</label>
+                {!editMode ? (
+                  <p>{users[0]?.phone ? `+91 ${users[0].phone}` : "—"}</p>
+                ) : (
+                  <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} required />
+                )}
+              </div>
+              <div className="profile-field password-field">
+                <label>Password</label>
+                <p>••••••••</p>
+                <button type="button" className="text-edit password-change" onClick={() => setShowPasswordForm(true)}>Change Password</button>
+              </div>
+            </div>
+
+            {showPasswordForm && (
+              <form className="password-form" onSubmit={handlePasswordSubmit}>
+                <div className="password-form-title">
+                  <h3>Change Password</h3>
+                  <p>Choose a strong password that you don't use elsewhere.</p>
+                </div>
+                <div className="password-grid">
+                  <div className="profile-field">
+                    <label htmlFor="newPassword">New Password</label>
+                    <input id="newPassword" type="password" name="newPassword" value={passwordData.newPassword} onChange={handlePasswordInputChange} required />
+                  </div>
+                  <div className="profile-field">
+                    <label htmlFor="confirmPassword">Confirm New Password</label>
+                    <input id="confirmPassword" type="password" name="confirmPassword" value={passwordData.confirmPassword} onChange={handlePasswordInputChange} required />
+                  </div>
+                </div>
+                <div className="profile-actions">
+                  <button type="button" className="secondary-btn" onClick={() => { setShowPasswordForm(false); setPasswordMessage(""); setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" }); }} disabled={passwordLoading}>Cancel</button>
+                  <button type="submit" className="primary-btn" disabled={passwordLoading}>{passwordLoading ? "Updating..." : "Update Password"}</button>
+                </div>
+                {passwordMessage && (
+                  <div className={`account-message ${passwordMessage.includes("success") ? "success" : "error"}`}>{passwordMessage}</div>
+                )}
+              </form>
+            )}
+          </section>
+
+          <div className="account-note">
+            <span className="note-icon">✓</span>
             <div>
-              <label>Password</label>
-              <p>********</p>
-              <span className="edit" style={{cursor: "pointer", color: "#0070f3", fontWeight: 500}} onClick={() => setShowPasswordForm(true)}>Change</span>
+              <strong>Your information is secure</strong>
+              <p>Keep your contact details up to date so we can provide a better shopping experience.</p>
             </div>
           </div>
-          {showPasswordForm && (
-            <form className="password-form" onSubmit={handlePasswordSubmit} style={{marginTop: 16, background: "#fff", borderRadius: 8, boxShadow: "0 1px 8px rgba(0,0,0,0.06)", padding: 20}}>
-              <div style={{marginBottom: 16}}>
-                <label style={{display: "block", fontWeight: 500, marginBottom: 6}}>New Password</label>
-                <input type="password" name="newPassword" value={passwordData.newPassword} onChange={handlePasswordInputChange} required style={{width: "100%", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc"}} />
-              </div>
-              <div style={{marginBottom: 16}}>
-                <label style={{display: "block", fontWeight: 500, marginBottom: 6}}>Confirm New Password</label>
-                <input type="password" name="confirmPassword" value={passwordData.confirmPassword} onChange={handlePasswordInputChange} required style={{width: "100%", padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc"}} />
-              </div>
-              <div style={{textAlign: "right"}}>
-                <button type="submit" disabled={passwordLoading} style={{marginRight: 8, background: "#0070f3", color: "#fff", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 500}}>Save</button>
-                <button type="button" onClick={() => { setShowPasswordForm(false); setPasswordMessage(""); setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" }); }} disabled={passwordLoading} style={{background: "#eee", color: "#333", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 500}}>Cancel</button>
-              </div>
-              {passwordMessage && (
-                <div style={{ color: passwordMessage.includes("success") ? "green" : "red", marginTop: 8 }}>{passwordMessage}</div>
-              )}
-            </form>
-          )}
-        </section>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

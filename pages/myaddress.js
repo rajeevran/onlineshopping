@@ -108,28 +108,41 @@ export default function MyAddressPage() {
   };
 
   return (
-    <div className="account-container" style={{maxWidth: 900, margin: "40px auto", background: "#fff", borderRadius: 16, boxShadow: "0 2px 16px rgba(0,0,0,0.08)", padding: 32, fontFamily: 'Segoe UI, Arial, sans-serif'}}>
-      {/* LEFT SIDEBAR */}
-      <aside className="account-sidebar" style={{float: "left", width: 220, marginRight: 32}}>
-        <div className="profile-card" style={{background: "#f7f7fa", borderRadius: 12, padding: 24, textAlign: "center", marginBottom: 24}}>
-          <div className="avatar" style={{fontSize: 48, marginBottom: 8}}>👤</div>
-          <h4 style={{margin: "8px 0", fontWeight: 600}}>{users[0]?.firstName} {users[0]?.lastName}</h4>
-          <p className="email" style={{color: "#888", fontSize: 15}}>{users[0]?.email}</p>
-        </div>
-        <ul className="menu" style={{listStyle: "none", padding: 0, margin: 0}}>
-          <li className={pathname === "/myaccount" ? "active" : ""} style={{padding: "10px 0", cursor: "pointer", fontWeight: pathname === "/myaccount" ? 600 : 400, color: pathname === "/myaccount" ? "#0070f3" : "#333"}}
-              onClick={() => router.push("myaccount")}>My Profile</li>
-          <li className={pathname === "/myorders" ? "active" : ""} style={{padding: "10px 0", cursor: "pointer", fontWeight: pathname === "/myorders" ? 600 : 400, color: pathname === "/myorders" ? "#0070f3" : "#333"}}
-              onClick={() => router.push("myorders")}>My Orders</li>
-          <li className={pathname === "/myaddress" ? "active" : ""} style={{padding: "10px 0", cursor: "pointer", fontWeight: pathname === "/myaddress" ? 600 : 400, color: pathname === "/myaddress" ? "#0070f3" : "#333"}}
-              onClick={() => router.push("myaddress")}>My Addresses</li>
-          <li className={pathname === "/mybank" ? "active" : ""} style={{padding: "10px 0", cursor: "pointer", fontWeight: pathname === "/mybank" ? 600 : 400, color: pathname === "/mybank" ? "#0070f3" : "#333"}}
-              onClick={() => router.push("mybank")}>My Bank Account</li>
-        </ul>
-      </aside>
-      {/* RIGHT CONTENT */}
-      <main className="account-content" style={{overflow: "hidden"}}>
-        <h2 style={{fontWeight: 700, fontSize: 28, marginBottom: 24}}>MY ADDRESS</h2>
+    <div className="account-page">
+      <div className="account-container">
+        <aside className="account-sidebar">
+          <div className="profile-card">
+            <div className="avatar">👤</div>
+            <h4>{users[0]?.firstName || "My"} {users[0]?.lastName || "Account"}</h4>
+            <p className="email">{users[0]?.email || ""}</p>
+          </div>
+
+          <nav className="account-menu" aria-label="Account navigation">
+            <button className={pathname === "/myaccount" ? "active" : ""} onClick={() => router.push("/myaccount")}>
+              <span>👤</span><span>My Profile</span>
+            </button>
+            <button className={pathname === "/myorders" ? "active" : ""} onClick={() => router.push("/myorders")}>
+              <span>📦</span><span>My Orders</span>
+            </button>
+            <button className={pathname === "/myaddress" ? "active" : ""} onClick={() => router.push("/myaddress")}>
+              <span>📍</span><span>My Addresses</span>
+            </button>
+            <button className={pathname === "/mybank" ? "active" : ""} onClick={() => router.push("/mybank")}>
+              <span>🏦</span><span>My Bank Account</span>
+            </button>
+          </nav>
+        </aside>
+      <main className="account-content">
+        <div className="account-title-row">
+            <div>
+              <p className="account-eyebrow">MY ADDRESS</p>
+              <h4>Communication Addresses</h4>
+            </div>
+            <div className="account-user-mobile">
+              <div className="mobile-avatar">👤</div>
+              <span>{users[0]?.firstName || "Account"}</span>
+            </div>
+          </div>
         <button onClick={() => setShowForm((v) => !v)} style={{marginBottom: 16, background: "#0070f3", color: "#fff", border: "none", borderRadius: 6, padding: "8px 20px", fontWeight: 500}}>
           {showForm ? "Cancel" : "Add New Address"}
         </button>
@@ -169,8 +182,8 @@ export default function MyAddressPage() {
           </form>
         )}
         {/* List of addresses */}
-        <section className="info-section" style={{background: '#f7f7fa', borderRadius: 12, padding: 24}}>
-          <div className="section-header" style={{marginBottom: 16}}>
+          <section className="account-section">
+            <div className="section-header">
             <h3 style={{margin: 0, fontWeight: 600}}>Saved Addresses</h3>
           </div>
           {addresses.length === 0 ? (
@@ -199,6 +212,7 @@ export default function MyAddressPage() {
           )}
         </section>
       </main>
+    </div>
     </div>
   );
 }

@@ -1,67 +1,82 @@
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Autoplay, Pagination, Navigation } from 'swiper/modules'
+import { FiArrowLeft, FiArrowRight } from 'react-icons/fi'
 
-import { useState, useEffect } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css'
+import 'swiper/css/pagination'
+import 'swiper/css/navigation'
 
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
-// import required modules
-import { Autoplay, Pagination, Navigation } from 'swiper/modules';
-
-import HomeProduct from './HomeProduct';
-
-// import required modules
+const fallbackSlides = [
+  {
+    image: '/uploads/jiu6qd24nzy1btuxlcqc98jwt.png',
+    eyebrow: 'NEW COLLECTION',
+    title: 'Timeless Elegance\nRedefined',
+    description: 'Discover graceful styles crafted for every moment that matters.',
+  },
+]
 
 const HeroBanner = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([])
+
   useEffect(() => {
-    fetch("/api/homeproducts")
+    fetch('/api/homeproducts')
       .then((res) => res.json())
-      .then((data) => setProducts(data));
-  }, []);
+      .then((data) => setProducts(Array.isArray(data) ? data : []))
+      .catch(() => setProducts([]))
+  }, [])
+
+  const slides = products.length ? products : fallbackSlides
+console.log('slides-----------',slides);
 
   return (
-    <header className='header'>
+    <section className="modern-hero-section" aria-label="Featured collection">
       <Swiper
-        
-        spaceBetween={30}
-        centeredSlides={true}
-        autoplay={{
-          delay: 2500,
-          disableOnInteraction: false,
-        }}
-        pagination={{
-          clickable: true,
-        }}
-        navigation={true}
+        spaceBetween={0}
+        centeredSlides
+        loop={slides.length > 1}
+        autoplay={{ delay: 4000, disableOnInteraction: false }}
+        pagination={{ clickable: true }}
+        navigation={{ nextEl: '.hero-next', prevEl: '.hero-prev' }}
         modules={[Autoplay, Pagination, Navigation]}
-        className="mySwiper"
-        style={{ borderRadius: "10px" }}
+        className="modern-hero-swiper"
       >
-        <div className='products-container'>
-          {products?.map(product => (
-            <SwiperSlide>
-              <HomeProduct key={product._id} product={product} />
+        {slides.map((product, index) => {
+          const image = product.images?.[0] || product.image || '/uploads/jiu6qd24nzy1btuxlcqc98jwt.png'
+          const title = product.title || product.name || 'Timeless Elegance Redefined'
+          const description = product.description || 'Discover graceful styles crafted for every moment that matters.'
+
+          return (
+            <SwiperSlide key={product._id || product.productId || index}>
+              <div className="modern-hero-slide">
+                <img src={image} alt={title} className="modern-hero-image" />
+                <div className="modern-hero-overlay" />
+                <div className="modern-hero-content">
+                  <span className="modern-hero-eyebrow">NEW COLLECTION</span>
+                  <h1>{String(title).replace(/\s+(?=Redefined$)/, '\n')}</h1>
+                  <p>{description}</p>
+                  <Link href={product.productId ? `/product/${product.productId}` : '/products'} className="modern-hero-button">
+                    SHOP NOW
+                  </Link>
+                </div>
+              </div>
             </SwiperSlide>
-          ))}
-        </div>
+          )
+        })}
 
+        <button className="hero-arrow hero-prev" aria-label="Previous slide"><FiArrowLeft size={22} /></button>
+        <button className="hero-arrow hero-next" aria-label="Next slide"><FiArrowRight size={22} /></button>
       </Swiper>
-    </header>
+
+      <div className="hero-benefits">
+        <div className="hero-benefit-item"><span className="benefit-icon">✧</span><div><strong>Premium Quality</strong><small>Carefully curated collection</small></div></div>
+        <div className="hero-benefit-item"><span className="benefit-icon">◇</span><div><strong>Secure Payment</strong><small>100% secure checkout</small></div></div>
+        <div className="hero-benefit-item"><span className="benefit-icon">♧</span><div><strong>Customer Support</strong><small>We’re here to help</small></div></div>
+        <div className="hero-benefit-item"><span className="benefit-icon">◇</span><div><strong>Exclusive Offers</strong><small>Best deals &amp; discounts</small></div></div>
+      </div>
+    </section>
   )
-
-}
-
-export const getServerSideProps = async () => {
-  const query = '*[_type == "product"]';
-  const products = await client.fetch(query);
-  //const bannerQuery = '*[_type == "banner"]';
-  // const bannerData = await client.fetch(bannerQuery);
-
-  return {
-    props: { products }
-  }
 }
 
 export default HeroBanner
