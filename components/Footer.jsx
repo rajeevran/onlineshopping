@@ -71,9 +71,9 @@ const Footer = () => {
       <div className='copyright'>
         <p>Follow us <span className='icon-container'>
             <span><GrTwitter size={20} /></span>
-            <span><GrFacebookOption size={20} /></span>
+            <a href="https://www.facebook.com/share/p/1H6YCoaC4p/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><GrFacebookOption size={20} /></a>
             <span><GrLinkedinOption size={20} /></span>
-            <span><GrInstagram size={20} /></span>
+            <a href="https://www.instagram.com/noadua_clothing/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><GrInstagram size={20} /></a>
             <span><GrYoutube size={20} /></span>
           </span></p>
         <p>100% Secure Payments <span className='icon-container'>

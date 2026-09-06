@@ -37,7 +37,7 @@ export default async function handler(req, res) {
 
     return res.status(201).json(user);
   } else if (req.method === "PUT") {
-    const { _id, firstName, lastName, email,dob,phone, passwordHash } = req.body;
+    const { _id, firstName, lastName, email,dob,phone,gender,role, passwordHash } = req.body;
     const updateData = { };
      
     if (!_id) {
@@ -58,6 +58,8 @@ export default async function handler(req, res) {
     if (dob) {
       updateData.dob = dob;
     }
+    if (gender !== undefined) updateData.gender = gender;
+    if (role && ["user", "admin"].includes(role)) updateData.role = role;
     if (passwordHash) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(passwordHash, salt);
@@ -67,8 +69,14 @@ export default async function handler(req, res) {
     console.log('users',user);
     
     return res.status(200).json(user);
-  }else {
-    res.setHeader("Allow", ["GET", "POST", "PUT"]);
+    } else if (req.method === "DELETE") {
+    const { _id } = req.body || {};
+    if (!_id) return res.status(400).json({ message: "User id is required" });
+    const deleted = await User.findByIdAndDelete(_id);
+    if (!deleted) return res.status(404).json({ message: "User not found" });
+    return res.status(200).json({ message: "User deleted", user: deleted });
+  } else {
+    res.setHeader("Allow", ["GET", "POST", "PUT", "DELETE"]);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

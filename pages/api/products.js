@@ -47,6 +47,9 @@ export default async function handler(req, res) {
         tags: fields.tags ? fields.tags[0].split(",").map((t) => t.trim()) : [],
         care: fields.care ? fields.care[0].split(",").map((t) => t.trim()) : [],
         images: imagePaths,
+        discountPrice: fields.discountPrice?.[0] ? Number(fields.discountPrice[0]) : undefined,
+        inStock: fields.inStock?.[0] === undefined ? true : String(fields.inStock[0]) !== "false",
+        featured: String(fields.featured?.[0] || "false") === "true",
       };
 
       const newProduct = await Product.create(productData);

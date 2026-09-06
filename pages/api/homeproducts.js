@@ -42,7 +42,7 @@ export default async function handler(req, res) {
       const productData = {
         title: fields.title?.[0] || "",
         productId: fields.productId?.[0] || "",
-        active: Boolean(fields.active?.[0]) || true,
+        active: fields.active?.[0] === undefined ? true : String(fields.active[0]) === "true",
         images: imagePaths,
       };
       try{

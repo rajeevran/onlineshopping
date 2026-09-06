@@ -4,17 +4,25 @@ import '../styles/globals.css'
 import { Layout } from '../components'
 import { StateContext } from '../context/StateContext'
 import Script from "next/script";
+import { useRouter } from 'next/router';
 
 export default function App({ Component, pageProps }) {
+  const router = useRouter();
+  const isAdminRoute = router.pathname === '/admin' || router.pathname === '/admin-login';
+
+  const content = (
+    <>
+      <Toaster />
+      <Component {...pageProps} />
+    </>
+  );
+
   return (
     <>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-    <StateContext>
-      <Layout>
-        <Toaster />
-        <Component {...pageProps} />
-      </Layout>
-    </StateContext>
-        </>
+      <StateContext>
+        {isAdminRoute ? content : <Layout>{content}</Layout>}
+      </StateContext>
+    </>
   )
 }

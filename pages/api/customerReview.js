@@ -12,7 +12,7 @@ export default async function handler(req, res) {
         comment: req.body.comment || "",
         rating: req.body.rating || 0,
         userId: req.body.userId || "",
-        active: Boolean(req.body.active) || true,
+        active: req.body.active === undefined ? true : (req.body.active === true || String(req.body.active) === "true"),
       };
       try{
       const newProduct = await Review.create(productData);

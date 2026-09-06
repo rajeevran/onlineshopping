@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         title: req.body.title || "",
         productId: req.body.productId || [],
         userId: req.body.userId || "",
-        active: Boolean(req.body.active) || true,
+        active: req.body.active === undefined ? true : (req.body.active === true || String(req.body.active) === "true"),
       };
       try{
       const newProduct = await FestiveWave.create(productData);
