@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-
+import "./Product";
+import "./User";
 const FestiveWave = new mongoose.Schema({
   autoId: {
       type: Number,

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-
+import "./Product";
+import "./User";
 const RecommendedProduct = new mongoose.Schema({
   autoId: {
       type: Number,

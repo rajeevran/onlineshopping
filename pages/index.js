@@ -12,20 +12,13 @@ import 'swiper/css/navigation';
 import { Navigation,A11y } from 'swiper/modules';
 import Review from '../components/Review';
 
-
-const Home = ({products}) => {
-    const [festiveWave, setFestiveWave] = useState([]);
-    const [recommendedProduct, setRecommendedProduct] = useState([]);
-    const [customerReview, setCustomerReview] = useState([]);
-    const [recentlyViewed, setRecentlyViewed] = useState([]);
-    const [exploreCollection, setExploreCollection] = useState([]);
     const getProductIds = (data) => {
-  if (!Array.isArray(data) || !data.length || !Array.isArray(data[0]?.productId)) {
-    return []
-  }
+    if (!Array.isArray(data) || !data.length || !Array.isArray(data[0]?.productId)) {
+      return []
+    }
 
-  return data[0].productId.filter(Boolean)
-}
+    return data[0].productId.filter(Boolean)
+    }
     const HomeProductCarousel = ({
       eyebrow,
       title,
@@ -33,7 +26,7 @@ const Home = ({products}) => {
       type = 'product',
     }) => {
       const items = Array.isArray(products) ? products : []
-
+      console.log('HomeProductCarousel items:', items,products,eyebrow,title,type);
       if (!items.length) return null
 
       return (
@@ -102,35 +95,42 @@ const Home = ({products}) => {
         </section>
       )
     }
-    useEffect(() => {
+const Home = ({products}) => {
+    const [festiveWave, setFestiveWave] = useState([]);
+    const [recommendedProduct, setRecommendedProduct] = useState([]);
+    const [customerReview, setCustomerReview] = useState([]);
+    const [recentlyViewed, setRecentlyViewed] = useState([]);
+    const [exploreCollection, setExploreCollection] = useState([]);
 
-      fetch("/api/festiveWave")
-        .then((res) => res.json())
-        .then((data) => setFestiveWave(data));
+  useEffect(() => {
+    const loadHomeSections = async () => {
+      try {
+        const [festive, recommended, reviews, recent, explore] = await Promise.all([
+          fetch('/api/festiveWave').then((res) => res.json()),
+          fetch('/api/recommendedProduct').then((res) => res.json()),
+          fetch('/api/customerReview').then((res) => res.json()),
+          fetch('/api/recentlyViewed').then((res) => res.json()),
+          fetch('/api/exploreCollection').then((res) => res.json()),
+        ])
 
-      fetch("/api/recommendedProduct")
-        .then((res) => res.json())
-        .then((data) => setRecommendedProduct(data));
-        
-      fetch("/api/customerReview")
-        .then((res) => res.json())
-        .then((data) => setCustomerReview(data));
-        
-      fetch("/api/recentlyViewed")
-        .then((res) => res.json())
-        .then((data) => setRecentlyViewed(data));
-        
-      fetch("/api/exploreCollection")
-        .then((res) => res.json())
-        .then((data) => setExploreCollection(data));
+        setFestiveWave(festive)
+        setRecommendedProduct(recommended)
+        setCustomerReview(reviews)
+        setRecentlyViewed(recent)
+        setExploreCollection(explore)
+      } catch (error) {
+        console.error('Failed to load homepage sections:', error)
+      }
+    }
 
-    }, []);
-    console.log('festiveWave',festiveWave);
+    loadHomeSections()
+  }, [])
+    console.log('customerReview',customerReview);
     
   return (
     <>
       <HeroBanner />
-            <HomeProductCarousel
+      <HomeProductCarousel
         eyebrow="FESTIVE EDIT"
         title="FESTIVE WAVE"
         products={getProductIds(festiveWave)}
@@ -140,21 +140,21 @@ const Home = ({products}) => {
         title="RECOMMENDED FOR YOU"
         products={getProductIds(recommendedProduct)}
       />
-            <HomeProductCarousel
+      <HomeProductCarousel
         eyebrow="SIGNATURE STYLES"
         title="EXPLORE COLLECTION"
         products={getProductIds(exploreCollection)}
       />
- {/* <HomeProductCarousel
-        eyebrow="YOUR RECENT PICKS"
-        title="RECENTLY VIEWED"
-        products={getProductIds(recentlyViewed)}
-      /> */}
-            <HomeProductCarousel
+      <HomeProductCarousel
+          eyebrow="YOUR RECENT PICKS"
+          title="RECENTLY VIEWED"
+          products={getProductIds(recentlyViewed)}
+        />
+      <HomeProductCarousel
         eyebrow="WHAT OUR CUSTOMERS SAY"
         title="CUSTOMER REVIEWS"
-        products={getProductIds(customerReview)}
-        type="review"
+        products={customerReview}
+        type='review'
       />
       <Newsletter />
     </>

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-
+import "./Product";
+import "./User";
 const ExploreCollection = new mongoose.Schema({
   autoId: {
       type: Number,
