@@ -9,6 +9,7 @@ import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 
 import { imageUrl } from "../lib/imageUrl";
+import { normalizeId } from "../lib/id";
 const fallbackSlides = [
   {
     image: '/uploads/jiu6qd24nzy1btuxlcqc98jwt.png',
@@ -43,12 +44,13 @@ const HeroBanner = () => {
         className="modern-hero-swiper"
       >
         {slides.map((product, index) => {
+          const productId = normalizeId(product?.productId?._id || product?.productId || product?._id)
           const image = product.images?.[0] || product.image || '/uploads/jiu6qd24nzy1btuxlcqc98jwt.png'
           const title = product.title || product.name || 'Timeless Elegance Redefined'
           const description = product.description || 'Discover graceful styles crafted for every moment that matters.'
 
           return (
-            <SwiperSlide key={product._id || product.productId || index}>
+            <SwiperSlide key={product._id || productId || index}>
               <div className="modern-hero-slide">
                 <img src={imageUrl(image)} alt={title} className="modern-hero-image" />
                 <div className="modern-hero-overlay" />
@@ -56,7 +58,7 @@ const HeroBanner = () => {
                   <span className="modern-hero-eyebrow">NEW COLLECTION</span>
                   <h1>{String(title).replace(/\s+(?=Redefined$)/, '\n')}</h1>
                   <p>{description}</p>
-                  <Link href={product.productId ? `/product/${product.productId}` : '/products'} className="modern-hero-button">
+                  <Link href={productId ? `/product/${encodeURIComponent(productId)}` : '/products'} className="modern-hero-button">
                     SHOP NOW
                   </Link>
                 </div>

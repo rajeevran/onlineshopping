@@ -1,13 +1,18 @@
 import React from 'react'
 import Link from 'next/link'
 import { imageUrl } from '../lib/imageUrl'
+import { normalizeId } from '../lib/id'
 import StarRatings from 'react-star-ratings';
 import Avatar from 'react-avatar';
 
-const Review = ({ product: { images, name, _id, price }, comment, rating, userId }) => {
+const Review = ({ product = {}, comment, rating, userId }) => {
+  const { images } = product || {};
+  const id = normalizeId(product?._id || product?.productId);
+  if (!id) return null;
+
   return (
     <div>
-      <Link href={`/product/${_id}`}>
+      <Link href={`/product/${encodeURIComponent(id)}`}>
         <div className='product-card'>
           <div
             slot="container-start"

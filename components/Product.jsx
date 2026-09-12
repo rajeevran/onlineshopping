@@ -1,11 +1,16 @@
 import React from 'react'
 import Link from 'next/link'
 import { imageUrl } from '../lib/imageUrl'
+import { normalizeId } from '../lib/id'
 
-const Product = ({product: {images, name, _id, price}}) => {
+const Product = ({ product = {} }) => {
+  const { images, name, price } = product;
+  const id = normalizeId(product?._id || product?.productId);
+  if (!id) return null;
+
   return (
     <div>
-      <Link href={`/product/${_id}`}>
+      <Link href={`/product/${encodeURIComponent(id)}`}>
         <div className='product-card'>
           <img src={imageUrl(images && images[0])} width={380} height={400} className='product-image' />
           <p className='product-name'>{name}</p>

@@ -11,6 +11,7 @@ import 'swiper/css/navigation';
 // import required modules
 import { Navigation,A11y } from 'swiper/modules';
 import Review from '../components/Review';
+import { normalizeId } from '../lib/id';
 
     // API responses contain one or more section records. Each record can contain
     // multiple populated products and a matching list of selected images. Flatten
@@ -31,6 +32,12 @@ import Review from '../components/Review';
         return products
           .filter(Boolean)
           .map((product, index) => {
+            // Always normalize the populated/unpopulated product ID. Passing a
+            // Mongoose ObjectId-like object into a Next Link produces
+            // /product/[object Object], which then makes the product API fail.
+            const productId = normalizeId(product?._id || product?.productId)
+            if (!productId) return null
+
             // Prefer the image explicitly selected for this section. If the API
             // has an older record where the image/product relationship wasn't
             // stored separately, match the URL against the populated product.
@@ -42,9 +49,12 @@ import Review from '../components/Review';
 
             return {
               ...product,
+              _id: productId,
+              productId,
               images: selectedImage ? [selectedImage] : productImages,
             }
           })
+          .filter(Boolean)
       })
     }
 

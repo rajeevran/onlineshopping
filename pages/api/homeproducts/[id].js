@@ -1,9 +1,12 @@
 import { connectToDatabase } from "../../../lib/mongodb";
 import HomeProduct from "../../../models/HomeProduct";
+import mongoose from "mongoose";
 
 export default async function handler(req, res) {
   await connectToDatabase();
   const { id } = req.query;
+
+  if (!mongoose.isValidObjectId(id)) return res.status(400).json({ message: "Invalid record ID" });
 
   if (req.method === "OPTIONS") { res.setHeader("Allow", ["GET", "PUT", "DELETE", "OPTIONS"]); return res.status(204).end(); }
 

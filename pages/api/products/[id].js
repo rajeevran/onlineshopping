@@ -1,9 +1,19 @@
 import { connectToDatabase } from "../../../lib/mongodb";
 import Product from "../../../models/Product";
+import mongoose from "mongoose";
 
 export default async function handler(req, res) {
   await connectToDatabase();
   const { id } = req.query;
+
+  if (req.method === "OPTIONS") {
+    res.setHeader("Allow", ["GET", "PUT", "DELETE", "OPTIONS"]);
+    return res.status(204).end();
+  }
+
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({ message: "Invalid product ID" });
+  }
 
   if (req.method === "GET") {
     const product = await Product.findById(id);

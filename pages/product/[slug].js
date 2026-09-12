@@ -7,6 +7,7 @@ import { toast } from 'react-hot-toast';
 import { jwtDecode } from "jwt-decode";
 import api from "../../lib/axiosInstance";
 import { imageUrl } from "../../lib/imageUrl";
+import { normalizeId } from "../../lib/id";
 const ProductDetails = ({}) => {
     const router = useRouter();
     const [size, setSize] = useState('');
@@ -19,7 +20,9 @@ const ProductDetails = ({}) => {
     console.log('product--', slug);
     useEffect(() => {
         if (isReady && slug) {
-            fetch(`/api/products/${slug}`)
+            const productId = normalizeId(slug);
+            if (!productId) return;
+            fetch(`/api/products/${encodeURIComponent(productId)}`)
                 .then((res) => res.json())
                 .then((data) => setProducts(data));
         }
