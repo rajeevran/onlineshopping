@@ -16,16 +16,14 @@ const Review = ({ product = {}, comment, rating, userId }) => {
         <div className='product-card'>
           <div
             slot="container-start"
-            className="product-image"
-            style={{
-              backgroundImage: `url(${imageUrl(images && images[0])})`,
-              height: 380,
-              width: 400,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+            className="product-image review-image"
             data-swiper-parallax="-23%"
           >
+            <img
+              src={imageUrl(images && images[0])}
+              alt="Customer review product"
+              className="review-product-image"
+            />
             <div className="text" data-swiper-parallax="-100">
               <p className='rating'><StarRatings
                 rating={rating}

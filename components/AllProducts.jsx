@@ -12,7 +12,7 @@ const Allproducts = ({ allproducts = {} }) => {
     <div>
       <Link href={`/product/${encodeURIComponent(id)}`}>
         <div className='Allproduct-card'>
-          <img src={imageUrl(images && images[0])} width={250} height={270} />
+          <img src={imageUrl(images && images[0])} width={250} height={270} alt={name || 'Product'} />
           <p className='Allproduct-name'>{name}</p>
           <p className='Allproduct-tags'>{tags}</p>
           <p className='Allproduct-price'>${price}</p>
