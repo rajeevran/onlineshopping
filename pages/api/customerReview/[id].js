@@ -1,98 +1,27 @@
 import { connectToDatabase } from "../../../lib/mongodb";
 import Review from "../../../models/Review";
-import mongoose from "mongoose";
-
-function cleanPayload(body) {
-  const source = body && typeof body === "object" ? body : {};
-  const data = { ...source };
-
-  // The admin image picker sends selected product IDs as an array for
-  // multi-image modules and a single ID for single-image modules.
-  if (Array.isArray(data.productId)) {
-    data.productId = data.productId.map(String).map(v => v.trim()).filter(Boolean);
-  } else if (typeof data.productId === "string") {
-    data.productId = data.productId.trim();
-    if (!data.productId) delete data.productId;
-  }
-
-  // Optional user IDs must not be sent as an empty string to Mongoose.
-  // An empty string cannot be cast to ObjectId and was causing PUT 500s.
-  if (data.userId === "" || data.userId === null || data.userId === undefined) {
-    delete data.userId;
-  } else if (typeof data.userId === "string") {
-    data.userId = data.userId.trim();
-    if (!data.userId) delete data.userId;
-  }
-
-  if (Array.isArray(data.images)) data.images = data.images.map(String).map(v => v.trim()).filter(Boolean);
-  else if (data.images === undefined || data.images === null) data.images = [];
-
-  if (data.active !== undefined) data.active = data.active === true || String(data.active) === "true";
-  if (data.rating !== undefined && data.rating !== "") data.rating = Number(data.rating);
-
-  delete data._id;
-  delete data.autoId;
-  delete data.createdAt;
-  delete data.__v;
-  delete data.selectedImages;
-
-  return data;
-}
-
-function validateIds(data) {
-  const ids = Array.isArray(data.productId) ? data.productId : (data.productId ? [data.productId] : []);
-  for (const id of ids) {
-    if (!mongoose.Types.ObjectId.isValid(id)) return `Invalid product ID: ${id}`;
-  }
-  if (data.userId && !mongoose.Types.ObjectId.isValid(data.userId)) return `Invalid user ID: ${data.userId}`;
-  return null;
-}
 
 export default async function handler(req, res) {
-  try {
-    if (req.method === "OPTIONS") {
-    res.setHeader("Allow", ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]);
-    return res.status(204).end();
-  }
-
   await connectToDatabase();
-    const { id } = req.query;
+  const { id } = req.query;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ message: "Invalid item ID" });
+  if (req.method === "OPTIONS") { res.setHeader("Allow", ["GET", "PUT", "DELETE", "OPTIONS"]); return res.status(204).end(); }
 
-    if (req.method === "GET") {
-    const query = Review.findById(id)
-      .populate("userId", "name email")
-      .populate("productId", "name price images");
-      const item = await query;
-      if (!item) return res.status(404).json({ message: "Item not found" });
-      return res.status(200).json(item);
-    }
-
-    if (req.method === "PUT") {
-      const data = cleanPayload(req.body);
-      const validationError = validateIds(data);
-      if (validationError) return res.status(400).json({ message: validationError });
-
-      const updated = await Review.findByIdAndUpdate(id, data, { new: true, runValidators: true });
-      if (!updated) return res.status(404).json({ message: "Item not found" });
-
-      const item = await Review.findById(updated._id)
-        .populate("userId", "name email")
-        .populate("productId", "name price images");
-      return res.status(200).json(item);
-    }
-
-    if (req.method === "DELETE") {
-      const item = await Review.findByIdAndDelete(id);
-      if (!item) return res.status(404).json({ message: "Item not found" });
-      return res.status(200).json({ message: "Item deleted" });
-    }
-
-    res.setHeader("Allow", ["GET", "PUT", "DELETE"]);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
-  } catch (error) {
-    console.error("[customerReview API]", error);
-    return res.status(500).json({ message: error?.message || "Internal server error" });
+  if (req.method === "GET") {
+    const product = await Review.findById(id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    return res.status(200).json(product);
   }
+
+  if (req.method === "PUT") {
+    try{const body=req.body||{};const payload={};if(body.productId!==undefined)payload.productId=String(body.productId||"").trim();if(body.userId)payload.userId=String(body.userId).trim();else if(body.userId===null)payload.userId=null;if(body.comment!==undefined)payload.comment=String(body.comment);if(body.rating!==undefined)payload.rating=Number(body.rating);if(body.active!==undefined)payload.active=body.active===true||String(body.active)==="true";if(Array.isArray(body.images))payload.images=body.images.filter(Boolean).map(String);const updated=await Review.findByIdAndUpdate(id,payload,{new:true,runValidators:true});if(!updated)return res.status(404).json({message:"Review not found"});return res.status(200).json(updated);}catch(err){return res.status(400).json({message:err.message||"Unable to update review"});}
+  }
+
+  if (req.method === "DELETE") {
+    await Review.findByIdAndDelete(id);
+    return res.status(200).json({ message: "Product deleted" });
+  }
+
+  res.setHeader("Allow", ["GET", "PUT", "DELETE", "OPTIONS"]);
+  res.status(405).end(`Method ${req.method} Not Allowed`);
 }

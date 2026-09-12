@@ -8,6 +8,7 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 
+import { imageUrl } from "../lib/imageUrl";
 const fallbackSlides = [
   {
     image: '/uploads/jiu6qd24nzy1btuxlcqc98jwt.png',
@@ -49,7 +50,7 @@ const HeroBanner = () => {
           return (
             <SwiperSlide key={product._id || product.productId || index}>
               <div className="modern-hero-slide">
-                <img src={image} alt={title} className="modern-hero-image" />
+                <img src={imageUrl(image)} alt={title} className="modern-hero-image" />
                 <div className="modern-hero-overlay" />
                 <div className="modern-hero-content">
                   <span className="modern-hero-eyebrow">NEW COLLECTION</span>

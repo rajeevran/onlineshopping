@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { toast } from 'react-hot-toast';
 import { jwtDecode } from "jwt-decode";
 import api from "../lib/axiosInstance";
+import { imageUrl } from "../lib/imageUrl";
 const FeaturesBanner =()=> {
   const [products, setProducts] = useState([]);
 
@@ -95,7 +96,7 @@ const FeaturesBanner =()=> {
         
 
         <div className='right'>
-           <Image src={products[0].images[0]} width={800} height={450} alt='img' />
+           <Image src={imageUrl(products[0].images[0])} width={800} height={450} alt='img' />
           <div>
 <p>This piece is ethically crafted in our small family-owned workshop in Peru with unmatched attention to detail and care. The Natural color is the actual natural color of the fiber, undyed and 100% traceable.</p>
             <Link href={'/products'}>

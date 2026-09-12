@@ -17,14 +17,7 @@ import Review from '../components/Review';
       return []
     }
 
-    const selectedImages = Array.isArray(data[0]?.images) ? data[0].images : []
-    return data[0].productId.filter(Boolean).map((product, index) => {
-      if (!product || typeof product !== 'object') return product
-      return {
-        ...product,
-        images: selectedImages[index] ? [selectedImages[index]] : product.images,
-      }
-    })
+    return data[0].productId.filter(Boolean)
     }
     const HomeProductCarousel = ({
       eyebrow,
@@ -87,7 +80,6 @@ import Review from '../components/Review';
                     {type === 'review' ? (
                       <Review
                         userId={item.userId}
-                        images={item.images}
                         comment={item.comment}
                         rating={item.rating}
                         product={item.productId}

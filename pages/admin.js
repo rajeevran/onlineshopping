@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { jwtDecode } from "jwt-decode";
 import api from "../lib/axiosInstance";
+import { imageUrl } from "../lib/imageUrl";
 
 const sections = [
   { id: "overview", label: "Overview", icon: "⌂" },
@@ -129,12 +130,12 @@ export default function AdminPage() {
         imageFiles: [],
         primaryImageIndex: 0,
       });
-    } else if (type === "customerReview") {
-      const selectedImages = buildSelectedImages(item, products, false);
-      setForm({ ...item, productId: item.productId?._id || item.productId || "", userId: item.userId?._id || item.userId || "", selectedImages });
     } else {
-      const selectedImages = buildSelectedImages(item, products, type !== "homeproducts");
-      setForm({ ...item, productId: selectedImages.map(x => x.productId).join(","), selectedImages, userId: item.userId?._id || item.userId || "" });
+      const ids = Array.isArray(item.productId) ? item.productId.map(x => x?._id || x).filter(Boolean) : [item.productId?._id || item.productId].filter(Boolean);
+      const stored = Array.isArray(item.images) ? item.images.filter(Boolean) : [];
+      const fallback = stored.length ? stored : ids.flatMap(id => { const p = products.find(x => x._id === id); return p?.images?.[0] ? [p.images[0]] : []; });
+      const selectedImages = fallback.map(url => ({ url, productId: products.find(p => p.images?.includes(url))?._id || ids[0] || "" }));
+      setForm({ ...item, productId: ids.join(","), userId: item.userId?._id || item.userId || "", selectedImages });
     }
     setModal({ type, mode: "edit", item });
   };
@@ -147,14 +148,25 @@ export default function AdminPage() {
     try {
       if (modal.type === "product") {
         if (modal.mode === "create") {
-          const fd = new FormData();
-          Object.entries(form).forEach(([key, value]) => {
-            if (key !== "images" && key !== "imageFiles" && key !== "primaryImageIndex") fd.append(key, Array.isArray(value) ? value.join(",") : value ?? "");
-          });
-          const files = Array.isArray(form.imageFiles) ? form.imageFiles : Array.from(e.target.images.files || []);
-          files.forEach((file) => fd.append("images", file));
-          fd.append("primaryImageIndex", String(form.primaryImageIndex || 0));
-          await api.post("/products", fd, { headers: { "Content-Type": "multipart/form-data" } });
+          const productPayload = { ...form };
+          delete productPayload._id; delete productPayload.createdAt; delete productPayload.__v;
+          delete productPayload.images; delete productPayload.imageFiles; delete productPayload.primaryImageIndex;
+          const created = await api.post("/products", productPayload);
+          const productId = created.data?._id;
+          if (!productId) throw new Error("Product was created without an ID");
+          const files = Array.isArray(form.imageFiles) ? form.imageFiles : Array.from(e.target.images?.files || []);
+          const optimizedFiles = await optimizeImageFiles(files);
+          let uploadedImages = [];
+          for (const file of optimizedFiles) {
+            const fd = new FormData();
+            fd.append("images", file);
+            const uploadResponse = await api.post(`/products/${productId}/images`, fd, { headers: { "Content-Type": "multipart/form-data" } });
+            uploadedImages = uploadResponse.data?.images || uploadedImages;
+          }
+          const primaryIndex = Number(form.primaryImageIndex) || 0;
+          if (uploadedImages.length && primaryIndex > 0 && primaryIndex < uploadedImages.length) {
+            await api.patch(`/products/${productId}/images`, { primaryIndex });
+          }
         } else {
           const payload = { ...form };
           payload.tags = Array.isArray(form.tags)
@@ -182,33 +194,16 @@ export default function AdminPage() {
         const base = endpoints[modal.type];
         const payload = { ...form };
         delete payload._id; delete payload.autoId; delete payload.createdAt; delete payload.__v;
-        // Do not send an empty optional ObjectId. Mongoose rejects "" for ObjectId fields.
-        if (payload.userId === "" || payload.userId === null || payload.userId === undefined) delete payload.userId;
-        const selectedImages = Array.isArray(form.selectedImages) ? form.selectedImages : [];
-        if (!selectedImages.length) {
-          setMessage("Select at least one product image before saving.");
-          return;
+        if (modal.type !== "users") {
+          const selected = Array.isArray(form.selectedImages) ? form.selectedImages : [];
+          const ids = [...new Set(selected.map(x => x.productId).filter(Boolean))];
+          payload.images = selected.map(x => x.url).filter(Boolean);
+          if (["recommendedProduct", "recentlyViewed", "exploreCollection", "festiveWave"].includes(modal.type)) payload.productId = ids;
+          else if (["homeproducts", "customerReview"].includes(modal.type)) payload.productId = ids[0] || String(form.productId || "").split(",").map(x => x.trim()).filter(Boolean)[0] || "";
         }
-        const selectedProductIds = selectedImages.map(item => item.productId).filter(Boolean);
-        if (modal.type === "homeproducts" || modal.type === "customerReview") {
-          payload.productId = selectedProductIds[0] || "";
-        } else {
-          payload.productId = selectedProductIds;
-        }
-        payload.images = selectedImages.map(item => item.image).filter(Boolean);
         delete payload.selectedImages;
-        if (modal.mode === "create") {
-          if (modal.type === "homeproducts") {
-            const fd = new FormData();
-            fd.append("title", payload.title || "");
-            fd.append("productId", payload.productId || "");
-            fd.append("active", String(payload.active !== false));
-            fd.append("images", JSON.stringify(payload.images || []));
-            await api.post(base, fd, { headers: { "Content-Type": "multipart/form-data" } });
-          } else {
-            await api.post(base, payload);
-          }
-        } else await api.put(`${base}/${modal.item._id}`, payload);
+        if (modal.mode === "create") await api.post(base, payload);
+        else await api.put(`${base}/${modal.item._id}`, payload);
       }
       setMessage(`${labels[modal.type] || "Product"} saved successfully.`);
       closeModal();
@@ -368,7 +363,7 @@ function Stat({ title, value, icon, onClick }) {
 
 function ProductTable({ products, onEdit, onDelete }) {
   return <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Featured</th><th>Actions</th></tr></thead><tbody>
-    {products.map(p=><tr key={p._id}><td><div className="table-product">{p.images?.[0] ? <img src={p.images[0]} /> : <div className="no-img">NO</div>}<div><b>{p.name}</b><small>{p._id}</small></div></div></td><td>{p.category || "—"}</td><td>₹{Number(p.discountPrice || p.price || 0).toLocaleString("en-IN")}</td><td><span className={`status-pill ${p.inStock !== false ? "green":"red"}`}>{p.inStock !== false ? "In stock":"Out"}</span></td><td>{p.featured ? "Yes":"No"}</td><td><ActionButtons onEdit={()=>onEdit(p)} onDelete={()=>onDelete(p)} /></td></tr>)}
+    {products.map(p=><tr key={p._id}><td><div className="table-product">{p.images?.[0] ? <img src={imageUrl(p.images[0])} /> : <div className="no-img">NO</div>}<div><b>{p.name}</b><small>{p._id}</small></div></div></td><td>{p.category || "—"}</td><td>₹{Number(p.discountPrice || p.price || 0).toLocaleString("en-IN")}</td><td><span className={`status-pill ${p.inStock !== false ? "green":"red"}`}>{p.inStock !== false ? "In stock":"Out"}</span></td><td>{p.featured ? "Yes":"No"}</td><td><ActionButtons onEdit={()=>onEdit(p)} onDelete={()=>onDelete(p)} /></td></tr>)}
   </tbody></table>{!products.length&&<Empty />}</div>;
 }
 
@@ -376,12 +371,7 @@ function CollectionTable({ type, items, onEdit, onDelete }) {
   return <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Title / ID</th><th>Products</th><th>User</th><th>Active</th><th>Created</th><th>Actions</th></tr></thead><tbody>
     {items.map(item=> {
       const ids = Array.isArray(item.productId) ? item.productId : [item.productId];
-      const selected = Array.isArray(item.images) && item.images.length
-        ? item.images.filter(Boolean)
-        : (Array.isArray(item.productId)
-          ? item.productId.map(product => product?.images?.[0]).filter(Boolean)
-          : [item.productId?.images?.[0]].filter(Boolean));
-      return <tr key={item._id}><td><b>{item.title || labels[type]}</b><small>{item._id}</small></td><td><div className="collection-thumb-list">{selected.slice(0,4).map((image, imageIndex)=><img key={`${item._id}-${imageIndex}`} src={image} alt="" />)}<span>{ids.filter(Boolean).length} product{ids.filter(Boolean).length === 1 ? "" : "s"}</span></div></td><td>{item.userId?.email || item.userId || "—"}</td><td><span className={`status-pill ${item.active !== false ? "green":"red"}`}>{item.active !== false ? "Active":"Inactive"}</span></td><td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "—"}</td><td><ActionButtons onEdit={()=>onEdit(item)} onDelete={()=>onDelete(item)} /></td></tr>
+      return <tr key={item._id}><td><b>{item.title || labels[type]}</b><small>{item._id}</small></td><td>{ids.filter(Boolean).length} product(s)</td><td>{item.userId?.email || item.userId || "—"}</td><td><span className={`status-pill ${item.active !== false ? "green":"red"}`}>{item.active !== false ? "Active":"Inactive"}</span></td><td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "—"}</td><td><ActionButtons onEdit={()=>onEdit(item)} onDelete={()=>onDelete(item)} /></td></tr>
     })}</tbody></table>{!items.length&&<Empty />}</div>;
 }
 
@@ -469,147 +459,28 @@ function EditForm({type,form,setForm,onSubmit,saving,products}) {
   </form>;
 
   if(type==="customerReview") return <form className="admin-form" onSubmit={onSubmit}>
-    <Field label="Selected product image">
-      <SelectedImageManager
-        products={products}
-        selected={Array.isArray(form.selectedImages) ? form.selectedImages : []}
-        setSelected={(selected) => { set("selectedImages", selected); set("productId", selected[0]?.productId || ""); }}
-        multiple={false}
-      />
-    </Field>
-    <Field label="User ID"><input value={form.userId||""} onChange={e=>set("userId",e.target.value)} /></Field>
+    <Field label="Selected product images"><SelectedImagesManager products={products} value={form.selectedImages||[]} onChange={v=>set("selectedImages",v)} /></Field>
+    <Field label="User ID (optional)"><input value={form.userId||""} onChange={e=>set("userId",e.target.value)} /></Field>
     <div className="form-grid two"><Field label="Rating"><select value={form.rating||5} onChange={e=>set("rating",Number(e.target.value))}>{[1,2,3,4,5].map(n=><option key={n}>{n}</option>)}</select></Field><Field label="Active"><select value={String(form.active!==false)} onChange={e=>set("active",e.target.value==="true")}><option value="true">Active</option><option value="false">Inactive</option></select></Field></div>
     <Field label="Comment"><textarea rows="5" value={form.comment||""} onChange={e=>set("comment",e.target.value)} /></Field><FormActions saving={saving}/>
   </form>;
 
   return <form className="admin-form" onSubmit={onSubmit}>
     <Field label="Title"><input value={form.title||""} onChange={e=>set("title",e.target.value)} /></Field>
-    <Field label="Selected images">
-      <SelectedImageManager
-        products={products}
-        selected={Array.isArray(form.selectedImages) ? form.selectedImages : []}
-        setSelected={(selected) => { set("selectedImages", selected); set("productId", selected.map(x => x.productId).join(",")); }}
-        multiple={type !== "homeproducts"}
-      />
-    </Field>
+    <Field label="Selected product images"><SelectedImagesManager products={products} value={form.selectedImages||[]} onChange={v=>set("selectedImages",v)} /></Field>
     <Field label="User ID (optional)"><input value={form.userId||""} onChange={e=>set("userId",e.target.value)} /></Field>
     <Field label="Active"><select value={String(form.active!==false)} onChange={e=>set("active",e.target.value==="true")}><option value="true">Active</option><option value="false">Inactive</option></select></Field>
     <FormActions saving={saving}/>
   </form>;
 }
 
-function buildSelectedImages(item, products, multiple) {
-  const productIds = Array.isArray(item?.productId)
-    ? item.productId.map(x => x?._id || x).filter(Boolean)
-    : [item?.productId?._id || item?.productId].filter(Boolean);
-  const storedImages = Array.isArray(item?.images) ? item.images.filter(Boolean) : [];
-
-  return productIds.map((productId, index) => {
-    const product = products.find(p => String(p._id) === String(productId));
-    const image = storedImages[index] || product?.images?.[0] || "";
-    return image ? { productId: String(productId), image, productName: product?.name || "Product" } : null;
-  }).filter(Boolean).slice(0, multiple ? 20 : 1);
-}
-
-function SelectedImageManager({ products, selected, setSelected, multiple = true }) {
-  const [pickerOpen, setPickerOpen] = useState(false);
-  const [editingIndex, setEditingIndex] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const selectedList = Array.isArray(selected) ? selected : [];
-
-  const openPicker = (index = null) => {
-    setEditingIndex(index);
-    setPickerOpen(true);
-  };
-
-  const chooseImage = (product, image) => {
-    const entry = { productId: String(product._id), image, productName: product.name || "Product" };
-    if (editingIndex !== null) {
-      const next = selectedList.map((item, index) => index === editingIndex ? entry : item);
-      setSelected(next);
-    } else if (multiple) {
-      const existingIndex = selectedList.findIndex(item => String(item.productId) === String(product._id));
-      if (existingIndex >= 0) {
-        setSelected(selectedList.map((item, index) => index === existingIndex ? entry : item));
-      } else {
-        setSelected([...selectedList, entry]);
-      }
-    } else {
-      setSelected([entry]);
-    }
-    setPickerOpen(false);
-    setEditingIndex(null);
-  };
-
-  const remove = (index) => setSelected(selectedList.filter((_, i) => i !== index));
-
-  return (
-    <div className="selected-image-manager">
-      <div className="selected-image-grid">
-        {selectedList.map((item, index) => (
-          <div className="selected-image-card" key={`${item.productId}-${item.image}-${index}`}>
-            <div className="selected-image-preview">
-              <img src={item.image} alt={item.productName || `Selected ${index + 1}`} />
-              <span className="selected-image-number">{index + 1}</span>
-            </div>
-            <div className="selected-image-info">
-              <b title={item.productName}>{item.productName}</b>
-              <small>{item.productId}</small>
-            </div>
-            <div className="selected-image-actions">
-              <button type="button" className="action-btn view" onClick={() => setPreview(item.image)}>View</button>
-              <button type="button" className="action-btn edit" onClick={() => openPicker(index)}>Edit</button>
-              <button type="button" className="action-btn delete" onClick={() => remove(index)}>Delete</button>
-            </div>
-          </div>
-        ))}
-        <button type="button" className="selected-image-add" onClick={() => openPicker(null)}>
-          <span>＋</span>
-          <strong>Add selected image{multiple ? "s" : ""}</strong>
-          <small>Choose from product images</small>
-        </button>
-      </div>
-
-      {!selectedList.length && <div className="selected-image-empty">No images selected yet. Add an image from your product catalogue.</div>}
-
-      {pickerOpen && (
-        <div className="image-picker-backdrop" onMouseDown={e => e.target === e.currentTarget && setPickerOpen(false)}>
-          <div className="image-picker-modal">
-            <div className="image-picker-head">
-              <div><span>PRODUCT IMAGE LIBRARY</span><h3>{editingIndex !== null ? "Replace selected image" : "Add selected images"}</h3></div>
-              <button type="button" onClick={() => { setPickerOpen(false); setEditingIndex(null); }}>×</button>
-            </div>
-            <div className="image-picker-grid">
-              {products.map(product => (
-                <div className="image-picker-product" key={product._id}>
-                  <div className="image-picker-product-title"><b>{product.name}</b><small>{product._id}</small></div>
-                  <div className="image-picker-images">
-                    {(Array.isArray(product.images) ? product.images : []).map((image, imageIndex) => (
-                      <button type="button" className="image-picker-option" key={`${product._id}-${image}-${imageIndex}`} onClick={() => chooseImage(product, image)}>
-                        <img src={image} alt={`${product.name} ${imageIndex + 1}`} />
-                        <span>Image {imageIndex + 1}</span>
-                      </button>
-                    ))}
-                    {!product.images?.length && <small className="image-picker-no-image">No product images</small>}
-                  </div>
-                </div>
-              ))}
-              {!products.length && <div className="selected-image-empty">No products are available. Add products first.</div>}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {preview && (
-        <div className="image-viewer-backdrop" onMouseDown={e => e.target === e.currentTarget && setPreview(null)}>
-          <div className="image-viewer">
-            <button type="button" className="image-viewer-close" onClick={() => setPreview(null)}>×</button>
-            <img src={preview} alt="Selected product preview" />
-          </div>
-        </div>
-      )}
-    </div>
-  );
+function SelectedImagesManager({products,value,onChange}){
+  const [picker,setPicker]=useState(false),[replace,setReplace]=useState(null),[preview,setPreview]=useState(null);
+  const selected=Array.isArray(value)?value:[];
+  const choose=(product,url)=>{const item={url,productId:product._id};const next=[...selected];if(replace!==null)next[replace]=item;else if(!selected.some(x=>x.url===url))next.push(item);onChange(next);setPicker(false);setReplace(null);};
+  return <>{<div className="product-image-manager">{selected.map((item,i)=><div className="product-image-card" key={`${item.url}-${i}`}><div className="product-image-preview"><img src={imageUrl(item.url)} alt={`Selected ${i+1}`}/></div><div className="product-image-actions"><button type="button" title="View image" onClick={()=>setPreview(item.url)}>◉</button><button type="button" title="Edit image" onClick={()=>{setReplace(i);setPicker(true)}}>✎</button><button type="button" className="danger" title="Delete image" onClick={()=>onChange(selected.filter((_,x)=>x!==i))}>♲</button></div></div>)}<button type="button" className="add-image-card" onClick={()=>{setReplace(null);setPicker(true)}}><span className="add-image-icon">+</span><strong>Add Selected Image</strong><small>Choose from product images</small></button></div>}
+  {picker&&<div className="image-viewer-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget){setPicker(false);setReplace(null)}}}><div className="image-picker-modal"><div className="image-picker-head"><div><span className="value-view-label">PRODUCT IMAGES</span><h3>{replace===null?"Select an image":"Replace image"}</h3></div><button type="button" onClick={()=>{setPicker(false);setReplace(null)}}>×</button></div><div className="image-picker-grid">{products.map(p=>(p.images||[]).map((url,i)=><button type="button" className="image-picker-card" key={`${p._id}-${i}`} onClick={()=>choose(p,url)}><img src={imageUrl(url)} alt={p.name}/><span>{p.name}</span><small>Image {i+1}</small></button>))}</div>{!products.length&&<p className="admin-empty">No product images available.</p>}</div></div>}
+  {preview&&<div className="image-viewer-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setPreview(null)}><div className="image-viewer"><button type="button" className="image-viewer-close" onClick={()=>setPreview(null)}>×</button><img src={imageUrl(preview)} alt="Selected image preview"/></div></div>}</>;
 }
 
 function ValueListManager({ values, setValues, placeholder, emptyText }) {
@@ -711,6 +582,13 @@ function ValueListManager({ values, setValues, placeholder, emptyText }) {
   );
 }
 
+async function optimizeImageFiles(files){
+  const MAX=850*1024; return Promise.all(Array.from(files||[]).map(file=>{
+    if(file.size<=MAX||typeof window==="undefined")return file;
+    return new Promise((resolve,reject)=>{const url=URL.createObjectURL(file),img=new Image();img.onload=()=>{URL.revokeObjectURL(url);const max=2000,scale=Math.min(1,max/Math.max(img.naturalWidth||img.width,img.naturalHeight||img.height));const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round((img.naturalWidth||img.width)*scale));canvas.height=Math.max(1,Math.round((img.naturalHeight||img.height)*scale));const ctx=canvas.getContext("2d");ctx.drawImage(img,0,0,canvas.width,canvas.height);const make=q=>canvas.toBlob(blob=>{if(!blob)return reject(new Error("Unable to optimize image"));if(blob.size<=MAX||q<=.45)resolve(new File([blob],`${file.name.replace(/\.[^.]+$/,"")}.jpg`,{type:"image/jpeg"}));else make(Math.max(.45,q-.1))},"image/jpeg",q);make(.85)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error(`Unable to read ${file.name}`))};img.src=url})
+  }))
+}
+
 function ProductImageManager({ productId, images, setImages, setImageFiles, createInputName, primaryIndex = 0, setPrimaryIndex }) {
   const [preview, setPreview] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -739,19 +617,17 @@ function ProductImageManager({ productId, images, setImages, setImageFiles, crea
       return;
     }
 
-    const fd = new FormData();
-    selected.forEach(file => fd.append("images", file));
     setUploading(true);
     try {
-      const res = await api.post(`/products/${productId}/images`, fd, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setImages(res.data?.images || []);
-    } catch (err) {
-      alert(err.response?.data?.message || "Unable to upload image(s).");
-    } finally {
-      setUploading(false);
-    }
+      const optimized = await optimizeImageFiles(selected);
+      let latest = images || [];
+      for (const file of optimized) {
+        const fd = new FormData(); fd.append("images", file);
+        const res = await api.post(`/products/${productId}/images`, fd, { headers: { "Content-Type": "multipart/form-data" } });
+        latest = res.data?.images || latest;
+      }
+      setImages(latest);
+    } catch (err) { alert(err.response?.data?.message || "Unable to upload image(s)."); } finally { setUploading(false); }
   };
 
   const replaceImage = async (index, file) => {
@@ -763,8 +639,9 @@ function ProductImageManager({ productId, images, setImages, setImageFiles, crea
       if (setImageFiles) setImageFiles(next);
       return;
     }
+    const optimized = await optimizeImageFiles([file]);
     const fd = new FormData();
-    fd.append("image", file);
+    fd.append("image", optimized[0]);
     fd.append("index", String(index));
     setUploading(true);
     try {
@@ -838,7 +715,7 @@ function ProductImageManager({ productId, images, setImages, setImageFiles, crea
         return (
           <div className={`product-image-card ${isPrimary ? "primary" : ""}`} key={`${src}-${index}`}>
             <div className="product-image-preview">
-              <img src={src} alt={`Product ${index + 1}`} />
+              <img src={imageUrl(src)} alt={`Product ${index + 1}`} />
               {isPrimary && <span className="primary-image-badge">Primary</span>}
             </div>
             <div className="product-image-actions">
@@ -883,7 +760,7 @@ function ProductImageManager({ productId, images, setImages, setImageFiles, crea
     {preview && <div className="image-viewer-backdrop" onMouseDown={e => e.target === e.currentTarget && setPreview(null)}>
       <div className="image-viewer">
         <button type="button" className="image-viewer-close" onClick={() => setPreview(null)}>×</button>
-        <img src={preview} alt="Product preview" />
+        <img src={imageUrl(preview)} alt="Product preview" />
       </div>
     </div>}
   </>;

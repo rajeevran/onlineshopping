@@ -7,6 +7,7 @@ import { jwtDecode } from "jwt-decode";
 
 import api from "../lib/axiosInstance";
 
+import { imageUrl } from "../lib/imageUrl";
 const Cart = () => {
   const cartRef = useRef();
   const {cartItems, onGetCartItems, totalPrice, totalQty, onRemove, toggleCartItemQuantity} = useStateContext();
@@ -110,7 +111,7 @@ const Cart = () => {
           {cartItems.length >= 1 && cartItems.map((item) => (
             <div key={item._id} className='item-card'>
               <div className='item-image'>
-                <img src={(item?.product?.images[0])} alt='img' />
+                <img src={imageUrl(item?.product?.images?.[0])} alt='img' />
               </div>
               <div className='item-details'>
                 <div className='name-and-remove'>

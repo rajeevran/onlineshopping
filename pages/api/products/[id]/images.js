@@ -10,7 +10,10 @@ export const config = {
   },
 };
 
-const uploadDir = path.join(process.cwd(), "public/uploads");
+const uploadDir = path.join(process.cwd(), "public", "uploads");
+const MAX_FILE_SIZE = 850 * 1024;
+
+fs.mkdirSync(uploadDir, { recursive: true });
 
 function parseIndex(value) {
   const index = Number(value);
@@ -18,11 +21,11 @@ function parseIndex(value) {
 }
 
 function uploadedPath(file) {
-  return "/uploads/" + path.basename(file.filepath);
+  return "/api/uploads/" + path.basename(file.filepath);
 }
 
 function removeLocalImage(imagePath) {
-  if (!imagePath || !imagePath.startsWith("/uploads/")) return;
+  if (!imagePath || !imagePath.includes("/uploads/")) return;
   const filename = path.basename(imagePath);
   const fullPath = path.join(uploadDir, filename);
   if (fullPath.startsWith(uploadDir) && fs.existsSync(fullPath)) {
@@ -31,13 +34,13 @@ function removeLocalImage(imagePath) {
 }
 
 export default async function handler(req, res) {
-  if (req.method === "OPTIONS") {
-    res.setHeader("Allow", ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]);
-    return res.status(204).end();
-  }
-
   await connectToDatabase();
   const { id } = req.query;
+
+  if (req.method === "OPTIONS") {
+    res.setHeader("Allow", ["POST", "PUT", "PATCH", "DELETE", "OPTIONS"]);
+    return res.status(204).end();
+  }
 
   const product = await Product.findById(id);
   if (!product) return res.status(404).json({ message: "Product not found" });
@@ -47,10 +50,12 @@ export default async function handler(req, res) {
       multiples: true,
       uploadDir,
       keepExtensions: true,
+      maxFileSize: MAX_FILE_SIZE,
+      maxFiles: 10,
     });
 
     form.parse(req, async (err, fields, files) => {
-      if (err) return res.status(400).json({ message: "Unable to parse image upload" });
+      if (err) return res.status(413).json({ message: "Image is too large. Please use an image under 850 KB." });
 
       const uploaded = files.images
         ? (Array.isArray(files.images) ? files.images : [files.images])
@@ -74,10 +79,12 @@ export default async function handler(req, res) {
       multiples: false,
       uploadDir,
       keepExtensions: true,
+      maxFileSize: MAX_FILE_SIZE,
+      maxFiles: 1,
     });
 
     form.parse(req, async (err, fields, files) => {
-      if (err) return res.status(400).json({ message: "Unable to parse image upload" });
+      if (err) return res.status(413).json({ message: "Image is too large. Please use an image under 850 KB." });
 
       const index = parseIndex(fields.index?.[0] ?? fields.index);
       const file = Array.isArray(files.image) ? files.image[0] : files.image;
@@ -148,6 +155,6 @@ export default async function handler(req, res) {
     return;
   }
 
-  res.setHeader("Allow", ["POST", "PUT", "PATCH", "DELETE"]);
+  res.setHeader("Allow", ["POST", "PUT", "PATCH", "DELETE", "OPTIONS"]);
   return res.status(405).end(`Method ${req.method} Not Allowed`);
 }

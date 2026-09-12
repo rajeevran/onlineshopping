@@ -6,6 +6,7 @@ import { useRouter } from 'next/dist/client/router';
 import { toast } from 'react-hot-toast';
 import { jwtDecode } from "jwt-decode";
 import api from "../../lib/axiosInstance";
+import { imageUrl } from "../../lib/imageUrl";
 const ProductDetails = ({}) => {
     const router = useRouter();
     const [size, setSize] = useState('');
