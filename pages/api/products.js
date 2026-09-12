@@ -44,13 +44,23 @@ export default async function handler(req, res) {
         price: Number(fields.price?.[0]) || 0,
         category: fields.category?.[0] || "",
         description: fields.description?.[0] || "",
-        tags: fields.tags ? fields.tags[0].split(",").map((t) => t.trim()) : [],
-        care: fields.care ? fields.care[0].split(",").map((t) => t.trim()) : [],
+        tags: fields.tags ? fields.tags[0].split(",").map((t) => t.trim()).filter(Boolean) : [],
+        care: fields.care ? fields.care[0].split(",").map((t) => t.trim()).filter(Boolean) : [],
+        colors: fields.colors ? fields.colors[0].split(",").map((t) => t.trim()).filter(Boolean) : [],
+        sizes: fields.sizes ? fields.sizes[0].split(",").map((t) => t.trim()).filter(Boolean) : [],
         images: imagePaths,
         discountPrice: fields.discountPrice?.[0] ? Number(fields.discountPrice[0]) : undefined,
         inStock: fields.inStock?.[0] === undefined ? true : String(fields.inStock[0]) !== "false",
         featured: String(fields.featured?.[0] || "false") === "true",
       };
+
+      const rawPrimaryIndex = Number(fields.primaryImageIndex?.[0]);
+      const primaryIndex = Number.isInteger(rawPrimaryIndex) && rawPrimaryIndex >= 0 && rawPrimaryIndex < imagePaths.length
+        ? rawPrimaryIndex
+        : 0;
+      if (imagePaths.length > 1 && primaryIndex !== 0) {
+        productData.images = [imagePaths[primaryIndex], ...imagePaths.filter((_, i) => i !== primaryIndex)];
+      }
 
       const newProduct = await Product.create(productData);
       return res.status(201).json(newProduct);

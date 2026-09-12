@@ -10,6 +10,7 @@ const RecommendedProduct = new mongoose.Schema({
   productId: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product", require:true }],
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   active: { type: Boolean, default: true },
+  images: { type: [String], default: [] }, // Selected product image URLs
   createdAt: { type: Date, default: Date.now },
 });
 // ✅ Auto-increment logic

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { connectToDatabase } from "../../lib/mongodb";
 import Review from "../../models/Review";
 import User from "../../models/User";
@@ -5,22 +6,28 @@ export default async function handler(req, res) {
   await connectToDatabase();
 
   if (req.method === "POST") {
-    
+    try {
+      const body = req.body && typeof req.body === "object" ? req.body : {};
       const productData = {
-        title: req.body.title || "",
-        productId: req.body.productId || "",
+        title: body.title || "",
+        productId: Array.isArray(body.productId) ? req.body.productId[0] : (body.productId || ""),
         comment: req.body.comment || "",
         rating: req.body.rating || 0,
-        userId: req.body.userId || "",
-        active: req.body.active === undefined ? true : (req.body.active === true || String(req.body.active) === "true"),
+        ...(body.userId ? { userId: String(body.userId).trim() } : {}),
+        active: body.active === undefined ? true : (body.active === true || String(body.active) === "true"),
+        images: Array.isArray(body.images) ? body.images.filter(Boolean) : [],
       };
-      try{
+
+      const ids = Array.isArray(productData.productId) ? productData.productId : (productData.productId ? [productData.productId] : []);
+      if (ids.some(id => !mongoose.Types.ObjectId.isValid(id))) return res.status(400).json({ message: "Invalid product ID" });
+      if (productData.userId && !mongoose.Types.ObjectId.isValid(productData.userId)) return res.status(400).json({ message: "Invalid user ID" });
+
       const newProduct = await Review.create(productData);
       return res.status(201).json(newProduct);
-      }catch(err){
-      return res.status(500).json(err);
-      }
-    
+    } catch (err) {
+      console.error("[customerReview API]", err);
+      return res.status(500).json({ message: err?.message || "Internal server error" });
+    }
   } else if (req.method === "GET") {
     const products = await Review.find()
     .populate("userId", "name email")

@@ -24,6 +24,7 @@ export default function AdminLogin() {
         return;
       }
       localStorage.setItem("adminToken", data.token);
+      localStorage.setItem("adminSession", "1");
       router.replace("/admin");
     } catch (err) {
       setError("Unable to connect to the server");

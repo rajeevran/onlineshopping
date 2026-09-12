@@ -27,7 +27,7 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: "Error parsing form data" });
       }
 
-      // Handle multiple image uploads
+      // Support both newly uploaded files and selected catalogue image URLs.
       let imagePaths = [];
       if (files.images) {
         if (Array.isArray(files.images)) {
@@ -36,6 +36,15 @@ export default async function handler(req, res) {
           );
         } else {
           imagePaths = ["/uploads/home/" + path.basename(files.images.filepath)];
+        }
+      }
+      if (!imagePaths.length && fields.images) {
+        const raw = Array.isArray(fields.images) ? fields.images[0] : fields.images;
+        try {
+          const parsed = JSON.parse(String(raw));
+          imagePaths = Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+        } catch {
+          imagePaths = String(raw).split(",").map(x => x.trim()).filter(Boolean);
         }
       }
 
@@ -53,7 +62,7 @@ export default async function handler(req, res) {
       }
     });
   } else if (req.method === "GET") {
-    const products = await HomeProduct.find();
+    const products = await HomeProduct.find().populate("productId", "name price images");
     return res.status(200).json(products);
   } else {
     res.setHeader("Allow", ["GET", "POST"]);

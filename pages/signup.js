@@ -13,7 +13,7 @@ export default function Signup() {
     phone:"",
     gender:"",
     dob:"",
-    role:"admin"
+    role:"user"
   });
 
   const [loading, setLoading] = useState(false);
@@ -98,7 +98,7 @@ export default function Signup() {
         phone:"",
         gender:"",
         dob:"",
-        role:"admin"
+        role:"user"
       });
 
     } catch (err) {
