@@ -14,6 +14,11 @@ import path from "path";
 import User from "../../models/User";
 
 export default async function handler(req, res) {
+  if (req.method === "OPTIONS") {
+    res.setHeader("Allow", ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]);
+    return res.status(204).end();
+  }
+
   await connectToDatabase();
 
   if (req.method === "POST") {

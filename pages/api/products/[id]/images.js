@@ -31,6 +31,11 @@ function removeLocalImage(imagePath) {
 }
 
 export default async function handler(req, res) {
+  if (req.method === "OPTIONS") {
+    res.setHeader("Allow", ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]);
+    return res.status(204).end();
+  }
+
   await connectToDatabase();
   const { id } = req.query;
 

@@ -50,7 +50,12 @@ function validateIds(data) {
 
 export default async function handler(req, res) {
   try {
-    await connectToDatabase();
+    if (req.method === "OPTIONS") {
+    res.setHeader("Allow", ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]);
+    return res.status(204).end();
+  }
+
+  await connectToDatabase();
     const { id } = req.query;
 
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ message: "Invalid item ID" });
