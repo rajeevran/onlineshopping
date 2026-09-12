@@ -12,13 +12,42 @@ import 'swiper/css/navigation';
 import { Navigation,A11y } from 'swiper/modules';
 import Review from '../components/Review';
 
+    // API responses contain one or more section records. Each record can contain
+    // multiple populated products and a matching list of selected images. Flatten
+    // every record so the homepage renders ALL configured products/images.
     const getProductIds = (data) => {
-    if (!Array.isArray(data) || !data.length || !Array.isArray(data[0]?.productId)) {
-      return []
+      if (!Array.isArray(data)) return []
+
+      return data.flatMap((record) => {
+        const products = Array.isArray(record?.productId)
+          ? record.productId
+          : record?.productId
+            ? [record.productId]
+            : []
+        const selectedImages = Array.isArray(record?.images)
+          ? record.images.filter(Boolean)
+          : []
+
+        return products
+          .filter(Boolean)
+          .map((product, index) => {
+            // Prefer the image explicitly selected for this section. If the API
+            // has an older record where the image/product relationship wasn't
+            // stored separately, match the URL against the populated product.
+            const productImages = Array.isArray(product?.images) ? product.images : []
+            const selectedImage =
+              selectedImages.find((url) => productImages.includes(url)) ||
+              selectedImages[index] ||
+              productImages[0]
+
+            return {
+              ...product,
+              images: selectedImage ? [selectedImage] : productImages,
+            }
+          })
+      })
     }
 
-    return data[0].productId.filter(Boolean)
-    }
     const HomeProductCarousel = ({
       eyebrow,
       title,
@@ -115,7 +144,15 @@ const Home = ({products}) => {
 
         setFestiveWave(festive)
         setRecommendedProduct(recommended)
-        setCustomerReview(reviews)
+        setCustomerReview(Array.isArray(reviews) ? reviews.map((review) => {
+          const product = review?.productId && !Array.isArray(review.productId) ? review.productId : null
+          if (!product) return review
+          const productImages = Array.isArray(product.images) ? product.images : []
+          const selected = Array.isArray(review.images)
+            ? review.images.find((url) => productImages.includes(url)) || review.images[0]
+            : null
+          return { ...review, productId: { ...product, images: selected ? [selected] : productImages } }
+        }) : [])
         setRecentlyViewed(recent)
         setExploreCollection(explore)
       } catch (error) {

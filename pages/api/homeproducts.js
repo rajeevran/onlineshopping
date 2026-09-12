@@ -25,7 +25,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: err.message || "Unable to create record" });
     }
   } else if (req.method === "GET") {
-    const products = await HomeProduct.find();
+    const products = await HomeProduct.find().populate("productId", "name price images");
     return res.status(200).json(products);
   } else {
     res.setHeader("Allow", ["GET", "POST", "OPTIONS"]);

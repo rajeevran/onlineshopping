@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { urlFor } from '../lib/client'
+import { imageUrl } from '../lib/imageUrl'
 import StarRatings from 'react-star-ratings';
 import Avatar from 'react-avatar';
 
@@ -13,7 +13,7 @@ const Review = ({ product: { images, name, _id, price }, comment, rating, userId
             slot="container-start"
             className="product-image"
             style={{
-              backgroundImage: `url(${images && images[0]})`,
+              backgroundImage: `url(${imageUrl(images && images[0])})`,
               height: 380,
               width: 400,
               backgroundSize: "cover",
