@@ -1,6 +1,7 @@
 import { connectToDatabase } from "../../../lib/mongodb";
 import Product from "../../../models/Product";
 import mongoose from "mongoose";
+import { cleanupUnusedImages } from "../../../lib/imageStorage";
 
 export default async function handler(req, res) {
   await connectToDatabase();
@@ -22,12 +23,27 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "PUT") {
-    const updated = await Product.findByIdAndUpdate(id, req.body, { new: true });
+    const current = await Product.findById(id);
+    if (!current) return res.status(404).json({ message: "Product not found" });
+
+    const oldImages = Array.isArray(current.images) ? [...current.images] : [];
+    const body = req.body || {};
+    const updated = await Product.findByIdAndUpdate(id, body, { new: true, runValidators: true });
+    if (!updated) return res.status(404).json({ message: "Product not found" });
+
+    // If an image was removed through an edit, remove its physical file too,
+    // unless another product/content module still references that same file.
+    if (Array.isArray(body.images)) await cleanupUnusedImages(oldImages);
+
     return res.status(200).json(updated);
   }
 
   if (req.method === "DELETE") {
+    const current = await Product.findById(id);
+    if (!current) return res.status(404).json({ message: "Product not found" });
+    const oldImages = Array.isArray(current.images) ? [...current.images] : [];
     await Product.findByIdAndDelete(id);
+    await cleanupUnusedImages(oldImages);
     return res.status(200).json({ message: "Product deleted" });
   }
 

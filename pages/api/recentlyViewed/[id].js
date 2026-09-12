@@ -1,6 +1,7 @@
 import { connectToDatabase } from "../../../lib/mongodb";
 import RecentlyViewed from "../../../models/RecentlyViewed";
 import mongoose from "mongoose";
+import { cleanupUnusedImages } from "../../../lib/imageStorage";
 
 export default async function handler(req, res) {
   await connectToDatabase();
@@ -17,12 +18,19 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "PUT") {
+    const current = await RecentlyViewed.findById(id);
+    if (!current) return res.status(404).json({message:"Record not found"});
+    const oldImages = Array.isArray(current.images) ? [...current.images] : [];
     try{const body=req.body||{};const payload={};if(body.title!==undefined)payload.title=String(body.title||"").trim();if(body.active!==undefined)payload.active=body.active===true||String(body.active)==="true";if(Array.isArray(body.images))payload.images=body.images.filter(Boolean).map(String);if(body.userId)payload.userId=String(body.userId).trim();else if(body.userId===null)payload.userId=null;if(body.productId!==undefined){const ids=Array.isArray(body.productId)?body.productId.map(String).map(x=>x.trim()).filter(Boolean):String(body.productId||"").split(",").map(x=>x.trim()).filter(Boolean);payload.productId=[...new Set(ids)];}
-const updated=await RecentlyViewed.findByIdAndUpdate(id,payload,{new:true,runValidators:true});if(!updated)return res.status(404).json({message:"Record not found"});return res.status(200).json(updated);}catch(err){return res.status(400).json({message:err.message||"Unable to update record"});}
+const updated=await RecentlyViewed.findByIdAndUpdate(id,payload,{new:true,runValidators:true});if(!updated)return res.status(404).json({message:"Record not found"});if (Array.isArray((req.body || {}).images)) await cleanupUnusedImages(oldImages);return res.status(200).json(updated);}catch(err){return res.status(400).json({message:err.message||"Unable to update record"});}
   }
 
   if (req.method === "DELETE") {
+    const current = await RecentlyViewed.findById(id);
+    if (!current) return res.status(404).json({ message: "Record not found" });
+    const oldImages = Array.isArray(current.images) ? [...current.images] : [];
     await RecentlyViewed.findByIdAndDelete(id);
+    await cleanupUnusedImages(oldImages);
     return res.status(200).json({ message: "Product deleted" });
   }
 

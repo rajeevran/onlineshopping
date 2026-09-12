@@ -3,6 +3,7 @@ import Product from "../../../../models/Product";
 import formidable from "formidable";
 import fs from "fs";
 import path from "path";
+import { cleanupUnusedImages } from "../../../../lib/imageStorage";
 
 export const config = {
   api: {
@@ -24,14 +25,6 @@ function uploadedPath(file) {
   return "/api/uploads/" + path.basename(file.filepath);
 }
 
-function removeLocalImage(imagePath) {
-  if (!imagePath || !imagePath.includes("/uploads/")) return;
-  const filename = path.basename(imagePath);
-  const fullPath = path.join(uploadDir, filename);
-  if (fullPath.startsWith(uploadDir) && fs.existsSync(fullPath)) {
-    try { fs.unlinkSync(fullPath); } catch (e) { console.warn("Unable to remove image:", e.message); }
-  }
-}
 
 export default async function handler(req, res) {
   await connectToDatabase();
@@ -90,7 +83,7 @@ export default async function handler(req, res) {
       const file = Array.isArray(files.image) ? files.image[0] : files.image;
 
       if (index < 0 || index >= (product.images || []).length) {
-        if (file?.filepath) removeLocalImage(uploadedPath(file));
+        if (file?.filepath) await cleanupUnusedImages([uploadedPath(file)]);
         return res.status(400).json({ message: "Invalid image index" });
       }
       if (!file) return res.status(400).json({ message: "Replacement image is required" });
@@ -98,7 +91,7 @@ export default async function handler(req, res) {
       const oldImage = product.images[index];
       product.images[index] = uploadedPath(file);
       await product.save();
-      removeLocalImage(oldImage);
+      await cleanupUnusedImages([oldImage]);
 
       return res.status(200).json({ images: product.images });
     });
@@ -146,7 +139,7 @@ export default async function handler(req, res) {
         const removed = product.images[index];
         product.images.splice(index, 1);
         await product.save();
-        removeLocalImage(removed);
+        await cleanupUnusedImages([removed]);
         return res.status(200).json({ images: product.images });
       } catch (e) {
         return res.status(400).json({ message: "Invalid request body" });
