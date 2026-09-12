@@ -368,11 +368,33 @@ function ProductTable({ products, onEdit, onDelete }) {
 }
 
 function CollectionTable({ type, items, onEdit, onDelete }) {
+  if (type === "customerReview") return <ReviewTable items={items} onEdit={onEdit} onDelete={onDelete} />;
   return <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Title / ID</th><th>Products</th><th>User</th><th>Active</th><th>Created</th><th>Actions</th></tr></thead><tbody>
     {items.map(item=> {
       const ids = Array.isArray(item.productId) ? item.productId : [item.productId];
       return <tr key={item._id}><td><b>{item.title || labels[type]}</b><small>{item._id}</small></td><td>{ids.filter(Boolean).length} product(s)</td><td>{item.userId?.email || item.userId || "—"}</td><td><span className={`status-pill ${item.active !== false ? "green":"red"}`}>{item.active !== false ? "Active":"Inactive"}</span></td><td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "—"}</td><td><ActionButtons onEdit={()=>onEdit(item)} onDelete={()=>onDelete(item)} /></td></tr>
     })}</tbody></table>{!items.length&&<Empty />}</div>;
+}
+
+function ReviewTable({ items, onEdit, onDelete }) {
+  const stars = (rating) => {
+    const value = Math.min(5, Math.max(0, Number(rating) || 0));
+    return <span className="admin-review-stars" aria-label={`${value} out of 5 stars`}>{[1,2,3,4,5].map(n => <span key={n} className={n <= value ? "filled" : "empty"}>★</span>)}</span>;
+  };
+  return <div className="admin-table-wrap admin-review-table-wrap"><table className="admin-table admin-review-table"><thead><tr><th>Customer Review</th><th>Rating</th><th>Comment</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody>
+    {items.map(item => {
+      const user = item.userId || {};
+      const product = item.productId || {};
+      return <tr key={item._id}>
+        <td><div className="admin-review-customer"><div className="admin-review-avatar">{String(user.name || user.email || "C").charAt(0).toUpperCase()}</div><div><b>{user.name || "Customer"}</b><small>{product.name || "Product"}</small></div></div></td>
+        <td><div className="admin-review-rating">{stars(item.rating)}<strong>{Number(item.rating || 0).toFixed(1)}</strong></div></td>
+        <td><div className="admin-review-comment">“{item.comment || "No comment"}”</div></td>
+        <td><span className={`status-pill ${item.active !== false ? "green":"red"}`}>{item.active !== false ? "Active":"Inactive"}</span></td>
+        <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "—"}</td>
+        <td><ActionButtons onEdit={()=>onEdit(item)} onDelete={()=>onDelete(item)} /></td>
+      </tr>
+    })}
+  </tbody></table>{!items.length&&<Empty />}</div>;
 }
 
 function UserTable({ users, onEdit, onDelete }) {

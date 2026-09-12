@@ -1,196 +1,203 @@
 "use client";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { FiArrowLeft, FiCheck, FiLock, FiPhone } from "react-icons/fi";
 
 export default function Signup() {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    passwordHash: "",
-    confirmPassword: "",
-    phone:"",
-    gender:"",
-    dob:"",
-    role:"user"
-  });
-
+  const [step, setStep] = useState("phone");
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState(["", "", "", ""]);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const inputs = useRef([]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+  const normalizedPhone = phone.replace(/\D/g, "").replace(/^91/, "").slice(0, 10);
 
-  const handleSignup = async (e) => {
+  useEffect(() => {
+    if (step === "otp") inputs.current[0]?.focus();
+  }, [step]);
+
+  const sendOtp = async (e) => {
     e.preventDefault();
+    setError("");
+    setMessage("");
 
-    if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.email ||
-      !formData.passwordHash ||
-      !formData.confirmPassword
-    ) {
-      alert("All fields are required.");
-      return;
-    }
-
-    if (formData.passwordHash !== formData.confirmPassword) {
-      alert("Passwords do not match.");
+    if (!/^[6-9]\d{9}$/.test(normalizedPhone)) {
+      setError("Enter a valid 10-digit phone number.");
       return;
     }
 
     try {
       setLoading(true);
-
-      const response = await fetch("/api/users", {
+      const res = await fetch("/api/otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            firstName: formData.firstName, 
-            lastName: formData.lastName, 
-            email: formData.email, 
-            passwordHash: formData.passwordHash,
-            phone: formData.phone,
-            gender: formData.gender,
-            dob: formData.dob,
-            role: formData.role
-         })
+        body: JSON.stringify({ action: "send", phone: normalizedPhone }),
       });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Could not send OTP.");
+      setMessage("OTP sent. Enter the 4-digit code to continue.");
+      setStep("otp");
+    } catch (err) {
+      setError(err.message || "Could not send OTP.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const data = await response.json();
+  const handleOtpChange = (index, value) => {
+    const digit = value.replace(/\D/g, "").slice(-1);
+    const next = [...otp];
+    next[index] = digit;
+    setOtp(next);
+    if (digit && index < 3) inputs.current[index + 1]?.focus();
+  };
 
-      if (!response.ok) {
-        alert(data.message);
-        return;
-      }
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      inputs.current[index - 1]?.focus();
+    }
+  };
 
-      alert("Account created successfully.");
-      // 2. Automatically login
+  const handlePaste = (e) => {
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 4);
+    if (!pasted) return;
+    e.preventDefault();
+    const next = ["", "", "", ""];
+    pasted.split("").forEach((digit, i) => { next[i] = digit; });
+    setOtp(next);
+    inputs.current[Math.min(pasted.length, 4) - 1]?.focus();
+  };
 
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: formData.email, passwordHash: formData.passwordHash })
-    });
+  const verifyOtp = async (e) => {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+    const code = otp.join("");
 
-    const loggedindata = await res.json();
-    setLoading(false);
-
-    if (!res.ok) {
-      setError(loggedindata.message);
+    if (code.length !== 4) {
+      setError("Enter the 4-digit OTP.");
       return;
     }
 
-    localStorage.setItem("token", loggedindata.token);
-    window.location.href = "/";
-
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        phone:"",
-        gender:"",
-        dob:"",
-        role:"user"
+    try {
+      setLoading(true);
+      const res = await fetch("/api/otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify", phone: normalizedPhone, otp: code }),
       });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Invalid OTP.");
 
+      localStorage.setItem("token", data.token);
+      setStep("success");
+      setTimeout(() => { window.location.href = "/"; }, 650);
     } catch (err) {
-      console.log(err);
-      alert("Server Error");
+      setError(err.message || "Invalid OTP.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="signup-container">
-      <form onSubmit={handleSignup} className="signup-form">
+    <main className="phone-auth-page">
+      <section className="phone-auth-card" aria-label="Phone login">
+        <div className="phone-auth-brand">
+          <span>NOADUA</span>
+          <small>ADMIN</small>
+        </div>
 
-        <h2>Create Account</h2>
+        <div className="phone-auth-icon">
+          {step === "success" ? <FiCheck /> : step === "otp" ? <FiLock /> : <FiPhone />}
+        </div>
 
-        <input
-          type="text"
-          placeholder="First Name"
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleChange}
-        />
+        {step === "phone" && (
+          <>
+            <div className="phone-auth-heading">
+              <p className="phone-auth-eyebrow">WELCOME BACK</p>
+              <h1>Sign in with your phone</h1>
+              <p>Enter your phone number and we&apos;ll send you a one-time verification code.</p>
+            </div>
 
-        <input
-          type="text"
-          placeholder="Last Name"
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleChange}
-        />
+            <form onSubmit={sendOtp} className="phone-auth-form">
+              <label htmlFor="phone">Phone number</label>
+              <div className="phone-input-wrap">
+                <span>+91</span>
+                <input
+                  id="phone"
+                  type="tel"
+                  inputMode="numeric"
+                  autoComplete="tel"
+                  placeholder="98765 43210"
+                  value={normalizedPhone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  maxLength={10}
+                  autoFocus
+                />
+              </div>
+              {error && <p className="phone-auth-error">{error}</p>}
+              <button type="submit" className="phone-auth-primary" disabled={loading}>
+                {loading ? "Sending OTP…" : "Continue"}
+              </button>
+            </form>
+          </>
+        )}
 
-        <input
-          type="email"
-          placeholder="Email Address"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-        />
+        {step === "otp" && (
+          <>
+            <button className="phone-auth-back" type="button" onClick={() => { setStep("phone"); setError(""); }}>
+              <FiArrowLeft /> Change number
+            </button>
+            <div className="phone-auth-heading">
+              <p className="phone-auth-eyebrow">VERIFY PHONE</p>
+              <h1>Enter your OTP</h1>
+              <p>We sent a 4-digit code to <strong>+91 {normalizedPhone}</strong>.</p>
+            </div>
 
-        
-        <input
-          type="phone"
-          placeholder="Phone Number"
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-        />
+            <form onSubmit={verifyOtp} className="phone-auth-form">
+              <div className="otp-inputs" onPaste={handlePaste}>
+                {otp.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(el) => { inputs.current[index] = el; }}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(index, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                    aria-label={`OTP digit ${index + 1}`}
+                  />
+                ))}
+              </div>
+              {message && <p className="phone-auth-message">{message}</p>}
+              {error && <p className="phone-auth-error">{error}</p>}
+              <button type="submit" className="phone-auth-primary" disabled={loading}>
+                {loading ? "Verifying…" : "Verify & Login"}
+              </button>
+              <p className="phone-auth-dev-note">Development OTP: <strong>1234</strong></p>
+            </form>
+          </>
+        )}
 
-        
-        <select
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-          <option value="Prefer not to say">Prefer not to say</option>
-        </select>
-        
-        <input
-          type="date"
-          name="dob"
-          value={formData.dob}
-          onChange={handleChange}
-          required
-          max={new Date().toISOString().split("T")[0]} // Prevent future dates
-        />
+        {step === "success" && (
+          <div className="phone-auth-success">
+            <h1>You&apos;re signed in</h1>
+            <p>Phone verified successfully. Taking you to your account…</p>
+          </div>
+        )}
 
-        <input
-          type="password"
-          placeholder="Password"
-          name="passwordHash"
-          value={formData.passwordHash}
-          onChange={handleChange}
-        />
+        {step !== "success" && (
+          <p className="phone-auth-footer">
+            By continuing, you agree to our terms and privacy policy.
+          </p>
+        )}
 
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          name="confirmPassword"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-        />
-        <button className="primary-btn" disabled={loading}>
-          {loading ? "Creating..." : "Sign Up"}
-        </button>
-
-      </form>
-    </div>
+        <Link href="/" className="phone-auth-home">← Back to Noadua</Link>
+      </section>
+    </main>
   );
 }

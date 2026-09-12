@@ -15,7 +15,7 @@ const Allproducts = ({ allproducts = {} }) => {
           <img src={imageUrl(images && images[0])} width={250} height={270} alt={name || 'Product'} />
           <p className='Allproduct-name'>{name}</p>
           <p className='Allproduct-tags'>{tags}</p>
-          <p className='Allproduct-price'>${price}</p>
+          <p className='Allproduct-price'>Rs {Number(price || 0).toLocaleString('en-IN')}</p>
         </div>
       </Link>
     </div>

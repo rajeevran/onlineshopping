@@ -4158,3 +4158,91 @@ body {
   max-width: 100%;
   object-position: center center;
 }
+
+/* ================= PHONE OTP AUTH ================= */
+.phone-auth-page {
+  min-height: calc(100vh - 1px);
+  display: grid;
+  place-items: center;
+  padding: 48px 20px;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(222, 204, 170, .22), transparent 34%),
+    radial-gradient(circle at 85% 85%, rgba(112, 73, 35, .08), transparent 35%),
+    #faf9f6;
+}
+
+.phone-auth-card {
+  width: min(100%, 440px);
+  padding: 42px 42px 30px;
+  border: 1px solid #e9e3da;
+  border-radius: 28px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 24px 70px rgba(48, 36, 25, .10);
+  text-align: center;
+}
+
+.phone-auth-brand { display: inline-flex; flex-direction: column; align-items: center; line-height: 1; margin-bottom: 28px; }
+.phone-auth-brand span { font-family: Georgia, serif; font-size: 23px; letter-spacing: .12em; color: #29251f; }
+.phone-auth-brand small { margin-top: 5px; font-size: 8px; letter-spacing: .35em; color: #b28b52; }
+.phone-auth-icon { width: 54px; height: 54px; margin: 0 auto 22px; border-radius: 50%; display: grid; place-items: center; background: #f4ecdf; color: #8e6331; font-size: 23px; }
+.phone-auth-heading { margin-bottom: 26px; }
+.phone-auth-eyebrow { margin-bottom: 9px; color: #ad7d3e; font-size: 10px; font-weight: 700; letter-spacing: .22em; }
+.phone-auth-heading h1, .phone-auth-success h1 { margin: 0 0 10px; color: #24211d; font-family: Georgia, serif; font-size: 32px; font-weight: 500; line-height: 1.15; }
+.phone-auth-heading > p:last-child, .phone-auth-success p { color: #77716a; font-size: 13px; line-height: 1.7; }
+.phone-auth-form { text-align: left; }
+.phone-auth-form label { display: block; margin: 0 0 9px; color: #3a3630; font-size: 12px; font-weight: 600; }
+.phone-input-wrap { display: flex; align-items: center; height: 56px; border: 1px solid #ded8d0; border-radius: 14px; background: #fff; overflow: hidden; transition: border-color .2s, box-shadow .2s; }
+.phone-input-wrap:focus-within { border-color: #b68a4d; box-shadow: 0 0 0 4px rgba(182,138,77,.10); }
+.phone-input-wrap span { padding: 0 15px; border-right: 1px solid #e8e2da; color: #6b6258; font-size: 14px; }
+.phone-input-wrap input { min-width: 0; flex: 1; height: 100%; padding: 0 16px; border: 0; outline: 0; font: inherit; font-size: 16px; color: #29251f; letter-spacing: .04em; }
+.phone-auth-primary { width: 100%; height: 54px; margin-top: 17px; border: 0; border-radius: 14px; background: #25231f; color: #fff; font: 600 13px 'Sora', sans-serif; letter-spacing: .06em; transition: transform .2s, background .2s; }
+.phone-auth-primary:hover:not(:disabled) { background: #3a3630; transform: translateY(-1px); }
+.phone-auth-primary:disabled { cursor: wait; opacity: .65; }
+.phone-auth-error, .phone-auth-message, .phone-auth-dev-note { margin: 10px 0 0; font-size: 11px; line-height: 1.5; }
+.phone-auth-error { color: #b33a32; }
+.phone-auth-message { color: #6d675f; }
+.phone-auth-dev-note { text-align: center; color: #9b9389; }
+.phone-auth-dev-note strong { color: #75552e; }
+.otp-inputs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 4px; }
+.otp-inputs input { width: 100%; height: 58px; border: 1px solid #ded8d0; border-radius: 13px; outline: 0; background: #fff; text-align: center; font-size: 22px; font-weight: 600; color: #29251f; }
+.otp-inputs input:focus { border-color: #b68a4d; box-shadow: 0 0 0 4px rgba(182,138,77,.10); }
+.phone-auth-back { display: inline-flex; align-items: center; gap: 7px; margin: 0 0 20px; padding: 0; border: 0; background: transparent; color: #756d64; font: 500 11px 'Sora', sans-serif; }
+.phone-auth-back:hover { color: #29251f; }
+.phone-auth-success { padding: 8px 0 22px; }
+.phone-auth-footer { margin: 23px 0 13px; color: #9a948d; font-size: 10px; line-height: 1.6; }
+.phone-auth-home { color: #6e5a3f; font-size: 11px; font-weight: 600; }
+
+@media (max-width: 520px) {
+  .phone-auth-page { min-height: 100svh; padding: 18px 14px; align-items: start; padding-top: 42px; }
+  .phone-auth-card { padding: 32px 22px 25px; border-radius: 22px; }
+  .phone-auth-heading h1, .phone-auth-success h1 { font-size: 28px; }
+}
+
+@media (max-width: 360px) {
+  .phone-auth-page { padding-left: 10px; padding-right: 10px; }
+  .phone-auth-card { padding-left: 17px; padding-right: 17px; }
+  .otp-inputs { gap: 7px; }
+}
+
+
+/* ================= CUSTOMER REVIEW UI ================= */
+.review-card-link{display:block;width:100%;color:inherit;text-decoration:none}
+.review-card{width:100%;margin:0;overflow:hidden;border-radius:18px;background:#f7f4ef;box-shadow:0 10px 28px rgba(34,24,17,.08);transition:transform .25s ease,box-shadow .25s ease}
+.review-card:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(34,24,17,.13)}
+.review-card-media{position:relative;width:100%;height:clamp(320px,34vw,470px);overflow:hidden;background:#f4f0e9}
+.review-card-media .review-product-image{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;background:#f4f0e9}
+.review-card-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,14,10,.03) 25%,rgba(20,14,10,.78) 100%);pointer-events:none}
+.review-card-content{position:absolute;left:0;right:0;bottom:0;padding:24px;color:#fff;z-index:2}
+.review-rating-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.review-rating-row .star-container{display:flex;align-items:center}
+.review-rating-number{font-size:12px;font-weight:700;letter-spacing:.04em;opacity:.92}
+.review-comment{margin:0 0 18px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font-family:Georgia,serif;font-size:19px;line-height:1.45;letter-spacing:.01em}
+.review-author{display:flex;align-items:center;gap:10px}
+.review-author strong,.review-author span{display:block}
+.review-author strong{font-size:13px;letter-spacing:.03em}
+.review-author span{font-size:10px;margin-top:2px;opacity:.7;text-transform:uppercase;letter-spacing:.12em}
+.review-card-placeholder{position:absolute;inset:0;display:grid;place-items:center;color:#8d8479;font-size:13px}
+
+.admin-review-table th:nth-child(1){min-width:190px}.admin-review-table th:nth-child(3){min-width:280px}
+.admin-review-customer{display:flex;align-items:center;gap:12px;min-width:160px}.admin-review-customer>div:last-child{min-width:0}.admin-review-customer b,.admin-review-customer small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.admin-review-customer small{margin-top:3px;color:#8b8176}.admin-review-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:0 0 38px;background:#ead8bd;color:#4a3425;font-weight:700}.admin-review-rating{display:flex;align-items:center;gap:9px;white-space:nowrap}.admin-review-rating strong{font-size:12px}.admin-review-stars{display:inline-flex;gap:2px;font-size:16px;line-height:1}.admin-review-stars .filled{color:#d39b38}.admin-review-stars .empty{color:#ddd4c7}.admin-review-comment{max-width:360px;white-space:normal;line-height:1.5;color:#4b4138;font-family:Georgia,serif}
+@media(max-width:640px){.review-card-media{height:min(430px,112vw)}.review-card-content{padding:18px}.review-comment{font-size:16px;margin-bottom:14px}.admin-review-table-wrap{overflow-x:auto}.admin-review-table{min-width:850px}}

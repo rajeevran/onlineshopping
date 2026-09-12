@@ -31,8 +31,8 @@ const EventsBanner = () => {
             <div className='details'>
               <p>Flex Sweatshirt</p>
               <div className='price'>
-                <span>$100.00</span>
-                <span>$75.00</span>
+                <span>Rs 100.00</span>
+                <span>Rs 75.00</span>
               </div>
             </div>
           </div>
@@ -41,8 +41,8 @@ const EventsBanner = () => {
             <div className='details'>
               <p>Flex Push Button Bomber</p>
               <div className='price'>
-                <span>$225.00</span>
-                <span>$190.00</span>
+                <span>Rs 225.00</span>
+                <span>Rs 190.00</span>
               </div>
             </div>
           </div>
@@ -51,8 +51,8 @@ const EventsBanner = () => {
             <div className='details'>
               <p>Flex Push Button Bomber</p>
               <div className='price'>
-                <span>$225.00</span>
-                <span>$190.00</span>
+                <span>Rs 225.00</span>
+                <span>Rs 190.00</span>
               </div>
             </div>
           </div>
@@ -61,8 +61,8 @@ const EventsBanner = () => {
             <div className='details'>
               <p>Flex Push Button Bomber</p>
               <div className='price'>
-                <span>$225.00</span>
-                <span>$190.00</span>
+                <span>Rs 225.00</span>
+                <span>Rs 190.00</span>
               </div>
             </div>
           </div>
