@@ -120,16 +120,32 @@ const ProductDetails = ({}) => {
                 <div className='product-images'>
                     <div className='small-images-container'>
                         {images?.map((item, ind) => (
-                            <img 
-                            key={ind}
-                            src={(item)} 
-                            height={400} width={600} 
-                            className='small-image' 
-                            onMouseEnter={() => setIndex(ind)} />
+                            <button
+                                key={ind}
+                                type="button"
+                                className={`product-thumbnail ${index === ind ? 'is-active' : ''}`}
+                                onMouseEnter={() => setIndex(ind)}
+                                onClick={() => setIndex(ind)}
+                                aria-label={`View product image ${ind + 1}`}
+                            >
+                                <img
+                                    src={item}
+                                    width={100}
+                                    height={100}
+                                    className='small-image'
+                                    alt={`${name} view ${ind + 1}`}
+                                />
+                            </button>
                         ))}
                     </div>
                     <div className='big-image-container'>
-                        <img src={(images && images[index])} height={600} width={600} />
+                        <img
+                            src={images && images[index]}
+                            width={900}
+                            height={1100}
+                            className='big-product-image'
+                            alt={name}
+                        />
                     </div>
                 </div>
                 <div className='product-details'>
