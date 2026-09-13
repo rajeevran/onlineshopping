@@ -13,7 +13,6 @@ export default function MyAccountPage() {
     lastName: "",
     email: "",
     gender: "",
-    dob: "",
     phone: ""
   });
   const [loading, setLoading] = useState(false);
@@ -41,7 +40,6 @@ export default function MyAccountPage() {
             lastName: res.data[0].lastName || "",
             email: res.data[0].email || "",
             gender: res.data[0].gender || "",
-            dob: res.data[0].dob ? res.data[0].dob.slice(0, 10) : "",
             phone: res.data[0].phone || ""
           });
         }
@@ -181,10 +179,6 @@ export default function MyAccountPage() {
                   <label>Gender</label>
                   <p>{users[0]?.gender || "—"}</p>
                 </div>
-                <div className="profile-field">
-                  <label>Date of Birth</label>
-                  <p>{users[0]?.dob ? new Date(users[0].dob).toLocaleDateString("en-GB") : "—"}</p>
-                </div>
               </div>
             ) : (
               <form className="profile-grid edit-grid" onSubmit={handleFormSubmit}>
@@ -208,10 +202,6 @@ export default function MyAccountPage() {
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
                   </select>
-                </div>
-                <div className="profile-field">
-                  <label htmlFor="dob">Date of Birth</label>
-                  <input id="dob" type="date" name="dob" value={formData.dob} onChange={handleInputChange} required />
                 </div>
                 <div className="profile-actions">
                   <button type="button" className="secondary-btn" onClick={() => setEditMode(false)} disabled={loading}>Cancel</button>

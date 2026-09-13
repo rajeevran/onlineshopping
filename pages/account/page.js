@@ -57,10 +57,6 @@ export default function MyAccountPage() {
               <label>Gender</label>
               <p>-</p>
             </div>
-            <div>
-              <label>Date of Birth</label>
-              <p>-</p>
-            </div>
           </div>
         </section>
 

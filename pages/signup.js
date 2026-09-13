@@ -107,7 +107,7 @@ export default function Signup() {
       <section className="phone-auth-card" aria-label="Phone login">
         <div className="phone-auth-brand">
           <span>NOADUA</span>
-          <small>{step === "phone" ? 'USER' : 'ADMIN'}</small>
+          <small>ADMIN</small>
         </div>
 
         <div className="phone-auth-icon">
