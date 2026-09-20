@@ -71,11 +71,11 @@ const Footer = () => {
       <div className='copyright'>
         <p>Follow us <span className='icon-container'>
             <span><GrTwitter size={20} /></span>
-            <a href="https://www.facebook.com/share/p/1H6YCoaC4p/" target="_blank" rel="noreferrer"><GrFacebookOption size={20} /></a>
+            <a href="https://www.facebook.com/noaduaclothings" target="_blank" rel="noreferrer"><GrFacebookOption size={20} /></a>
             <span><GrLinkedinOption size={20} /></span>
-            <a href="https://www.instagram.com/noadua_clothing/" target="_blank" rel="noreferrer"><GrInstagram size={20} /></a>
+            <a href="https://www.instagram.com/noadua_clothings/" target="_blank" rel="noreferrer"><GrInstagram size={20} /></a>
             <span><GrYoutube size={20} /></span>
-          </span></p>
+          </span></p> 
         <p>100% Secure Payments <span className='icon-container'>
             <span><FaCcMastercard size={20} /></span>
             <span><FaCcVisa size={20} /></span>
