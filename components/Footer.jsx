@@ -3,6 +3,8 @@ import Image from 'next/image'
 import logo from '../src/assets/Logo.png'
 import {GrFacebookOption, GrTwitter, GrInstagram ,GrYoutube , GrLinkedinOption} from 'react-icons/gr'
 import { FaCcMastercard, FaCcVisa, FaExpeditedssl   } from "react-icons/fa";
+import { RiTwitterXLine } from "react-icons/ri";
+
 import { SiRazorpay } from 'react-icons/si';
 const Footer = () => {
   return (
@@ -70,7 +72,7 @@ const Footer = () => {
 
       <div className='copyright'>
         <p>Follow us <span className='icon-container'>
-            <span><GrTwitter size={20} /></span>
+            <span><RiTwitterXLine size={20} /></span>
             <a href="https://www.facebook.com/noaduaclothings" target="_blank" rel="noreferrer"><GrFacebookOption size={20} /></a>
             <span><GrLinkedinOption size={20} /></span>
             <a href="https://www.instagram.com/noadua_clothings/" target="_blank" rel="noreferrer"><GrInstagram size={20} /></a>
