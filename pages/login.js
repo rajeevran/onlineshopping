@@ -10,6 +10,7 @@ export default function Signup() {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [sessionId, setSessionId] = useState("");
   const [loading, setLoading] = useState(false);
   const inputs = useRef([]);
 
@@ -38,6 +39,7 @@ export default function Signup() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Could not send OTP.");
+      setSessionId(data.sessionId);
       setMessage("OTP sent. Enter the 4-digit code to continue.");
       setStep("otp");
     } catch (err) {
@@ -87,7 +89,7 @@ export default function Signup() {
       const res = await fetch("/api/otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "verify", phone: normalizedPhone, otp: code }),
+        body: JSON.stringify({ action: "verify", phone: normalizedPhone, otp: code , sessionId}),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Invalid OTP.");
