@@ -104,9 +104,9 @@ export default async function handler(req, res) {
       // Development OTP service: no real SMS is sent yet.
       // The verification code is intentionally static until an SMS provider is connected.
       const generatedOtp = generateOtp();
-      const templateName = "SignIN_OTP"; // Replace with your actual template name if needed
+
       const result = await providerRequest(
-        `SMS/${encodeURIComponent(`91${mobile}`)}/${encodeURIComponent(generatedOtp)}/${encodeURIComponent(templateName)}`
+        `SMS/${encodeURIComponent(`91${mobile}`)}/${encodeURIComponent(generatedOtp)}`
       );
 
       return res.status(200).json({
