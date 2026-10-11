@@ -111,7 +111,7 @@ const Navbar = () => {
                   <button onClick={() => { setOpen(false); router.push('/myorders') }}>My Orders</button>
                   {/* <button onClick={() => { setOpen(false); router.push('/mywishlist') }}>My Wishlist</button> */}
                   <button onClick={() => { setOpen(false); router.push('/myaddress') }}>My Address</button>
-                  <button onClick={() => { setOpen(false); router.push('/mybank') }}>My Bank Account</button>
+                  {/* <button onClick={() => { setOpen(false); router.push('/mybank') }}>My Bank Account</button> */}
                   <button onClick={handleLogout}>Logout</button>
                 </div>
               )}

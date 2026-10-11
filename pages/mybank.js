@@ -112,9 +112,9 @@ export default function MyBankPage() {
             <button className={pathname === "/myaddress" ? "active" : ""} onClick={() => router.push("/myaddress")}>
               <span>📍</span><span>My Addresses</span>
             </button>
-            <button className={pathname === "/mybank" ? "active" : ""} onClick={() => router.push("/mybank")}>
+            {/* <button className={pathname === "/mybank" ? "active" : ""} onClick={() => router.push("/mybank")}>
               <span>🏦</span><span>My Bank Account</span>
-            </button>
+            </button> */}
           </nav>
         </aside>
 

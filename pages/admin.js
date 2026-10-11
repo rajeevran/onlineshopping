@@ -15,6 +15,7 @@ const sections = [
   { id: "customerReview", label: "Customer Reviews", icon: "★" },
   { id: "users", label: "Users", icon: "♙" },
   { id: "orders", label: "Orders", icon: "▤" },
+  { id: "shipping", label: "Shipping Activity", icon: "↗" },
 ];
 
 const endpoints = {
@@ -316,6 +317,10 @@ export default function AdminPage() {
             <OrderTable orders={filteredOrders} users={users} onStatus={updateOrder} />
           </section>
         )}
+
+        {active === "shipping" && (
+          <ShippingActivity orders={orders} users={users} onRefresh={loadAll} />
+        )}
       </main>
 
       {modal && (
@@ -395,6 +400,157 @@ function ReviewTable({ items, onEdit, onDelete }) {
       </tr>
     })}
   </tbody></table>{!items.length&&<Empty />}</div>;
+}
+
+
+function ShippingActivity({ orders, users, onRefresh }) {
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [busyId, setBusyId] = useState("");
+  const [notice, setNotice] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [payloadText, setPayloadText] = useState("");
+  const [showPayload, setShowPayload] = useState(false);
+  const [awbInput, setAwbInput] = useState("");
+  const [trackingResult, setTrackingResult] = useState(null);
+
+  const shipments = useMemo(() => orders.filter((o) =>
+    o.shipping?.awb || o.shipping?.shipmentId || o.shipping?.status
+  ), [orders]);
+  const filtered = useMemo(() => orders.filter((o) => {
+    const text = `${o.orderId || ""} ${o._id || ""} ${o.shipping?.awb || ""} ${o.shipping?.status || ""} ${users.find(u => String(u._id) === String(o.userId?._id || o.userId))?.email || ""}`.toLowerCase();
+    const matchesQuery = text.includes(query.toLowerCase());
+    const matchesStatus = statusFilter === "all" ||
+      (statusFilter === "unshipped" ? !o.shipping?.awb : String(o.shipping?.status || "").toLowerCase().includes(statusFilter));
+    return matchesQuery && matchesStatus;
+  }), [orders, users, query, statusFilter]);
+
+  const makePayload = (order) => {
+    const address = order.addressId || {};
+    const customer = users.find(u => String(u._id) === String(order.userId?._id || order.userId)) || {};
+    return {
+      order_id: order.orderId || String(order._id),
+      customer: {
+        name: address.name || [customer.firstName, customer.lastName].filter(Boolean).join(" "),
+        phone: address.phone || customer.phone || "",
+        email: customer.email || "",
+      },
+      delivery_address: {
+        street: address.street || "",
+        city: address.city || "",
+        state: address.state || "",
+        pincode: address.pincode || "",
+      },
+      items: (order.products || []).map((item) => ({
+        name: item.productId?.name || "Product",
+        sku: item.productId?.sku || String(item.productId?._id || ""),
+        quantity: Number(item.quantity || 1),
+        price: Number(item.price || 0),
+        size: item.size || "",
+      })),
+      payment_method: order.paymentMethod || "",
+      payment_status: order.paymentStatus || "",
+      order_amount: Number(order.totalAmount || 0),
+    };
+  };
+
+  const openCreate = (order) => {
+    setSelectedOrder(order);
+    setPayloadText(JSON.stringify(makePayload(order), null, 2));
+    setShowPayload(true);
+    setNotice("");
+  };
+
+  const callShipping = async (body) => {
+    setBusyId(body.orderId || body.awb || "tracking");
+    setNotice("");
+    try {
+      const response = await api.post("/admin/shipping", body);
+      setTrackingResult(response.data);
+      setNotice(response.data.message || "Shipping activity updated.");
+      await onRefresh();
+      if (body.action === "create" && response.data.order) {
+        setSelectedOrder(response.data.order);
+      }
+    } catch (error) {
+      setNotice(error.response?.data?.message || "Shipping request failed. Check Ekart configuration and try again.");
+    } finally {
+      setBusyId("");
+    }
+  };
+
+  const submitCreate = async (event) => {
+    event.preventDefault();
+    let payload;
+    try { payload = JSON.parse(payloadText); }
+    catch { setNotice("Shipment payload must be valid JSON."); return; }
+    if (!payload || Array.isArray(payload) || typeof payload !== "object") {
+      setNotice("Shipment payload must be a JSON object."); return;
+    }
+    await callShipping({ action: "create", orderId: selectedOrder._id, payload });
+    setShowPayload(false);
+  };
+
+  const trackOrder = (order) => callShipping({ action: "track", orderId: order._id, awb: order.shipping?.awb });
+  const unshippedCount = orders.filter(o => !o.shipping?.awb && o.orderStatus !== "Cancelled").length;
+  const deliveredCount = orders.filter(o => /deliver/i.test(o.shipping?.status || o.orderStatus || "")).length;
+
+  return <div className="shipping-page">
+    <div className="shipping-hero">
+      <div><span className="shipping-eyebrow">LOGISTICS · EKART</span><h2>Shipping activity</h2><p>Prepare shipments, refresh tracking and monitor delivery progress from one workspace.</p></div>
+      <button className="admin-primary-btn" onClick={onRefresh}>↻ Refresh orders</button>
+    </div>
+    <div className="shipping-stats">
+      <div className="shipping-stat"><span>All orders</span><strong>{orders.length}</strong><small>Orders in your store</small></div>
+      <div className="shipping-stat"><span>Awaiting shipment</span><strong>{unshippedCount}</strong><small>Ready for shipment creation</small></div>
+      <div className="shipping-stat"><span>Tracked shipments</span><strong>{shipments.length}</strong><small>Have Ekart shipment details</small></div>
+      <div className="shipping-stat"><span>Delivered</span><strong>{deliveredCount}</strong><small>Based on latest order / carrier status</small></div>
+    </div>
+    <div className="shipping-toolbar">
+      <label className="shipping-search">⌕ <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search order, AWB or customer..." /></label>
+      <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} aria-label="Filter shipping activity">
+        <option value="all">All orders</option><option value="unshipped">Awaiting shipment</option><option value="transit">In transit</option><option value="deliver">Delivered</option><option value="cancel">Cancelled</option>
+      </select>
+      <form className="shipping-track-form" onSubmit={e => { e.preventDefault(); if (awbInput.trim()) callShipping({ action: "track", awb: awbInput.trim() }); }}>
+        <input value={awbInput} onChange={e => setAwbInput(e.target.value)} placeholder="Track AWB directly" aria-label="AWB number" />
+        <button className="admin-primary-btn" disabled={!awbInput.trim() || !!busyId}>Track</button>
+      </form>
+    </div>
+    {notice && <div className={`shipping-notice ${/failed|error|invalid|set ekart|not configured/i.test(notice) ? "error" : ""}`}>{notice}<button onClick={() => setNotice("")}>×</button></div>}
+    {trackingResult?.data && <div className="shipping-result">
+      <div className="shipping-result-head"><div><span className="shipping-eyebrow">LATEST CARRIER RESPONSE</span><h3>{trackingResult.order?.shipping?.status || "Tracking response"}</h3></div><button className="action-btn view" onClick={() => setTrackingResult(null)}>Dismiss</button></div>
+      {Array.isArray(trackingResult.history) && trackingResult.history.length > 0 && <div className="shipping-timeline">{trackingResult.history.map((event, i) => <div className="shipping-event" key={`${event.timestamp || ""}-${i}`}><span className="shipping-event-dot"/><div><b>{event.status}</b><p>{event.description || event.location || "Carrier update"}</p><small>{event.location}{event.timestamp ? ` · ${new Date(event.timestamp).toLocaleString()}` : ""}</small></div></div>)}</div>}
+      <details><summary>View raw tracking response</summary><pre>{JSON.stringify(trackingResult.data, null, 2)}</pre></details>
+    </div>}
+    <section className="admin-panel shipping-orders-panel">
+      <div className="admin-panel-header"><div><h2>Orders &amp; shipments</h2><span>{filtered.length} matching orders</span></div></div>
+      <div className="admin-table-wrap"><table className="admin-table shipping-table"><thead><tr><th>Order</th><th>Customer / destination</th><th>Shipment</th><th>Last update</th><th>Actions</th></tr></thead><tbody>
+        {filtered.map(order => {
+          const address = order.addressId || {};
+          const customer = users.find(u => String(u._id) === String(order.userId?._id || order.userId));
+          const shipping = order.shipping || {};
+          return <tr key={order._id}>
+            <td><b>#{order.orderId || String(order._id).slice(-8)}</b><small>{order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "Order date unavailable"}</small><small>₹{Number(order.totalAmount || 0).toLocaleString("en-IN")}</small></td>
+            <td><b>{address.name || [customer?.firstName, customer?.lastName].filter(Boolean).join(" ") || customer?.email || "Customer"}</b><small>{address.city ? `${address.city}, ${address.state || ""} ${address.pincode || ""}` : "Address unavailable"}</small><small>{address.phone || customer?.phone || ""}</small></td>
+            <td>{shipping.awb ? <><span className="status-pill green">AWB {shipping.awb}</span><small>{shipping.status || "Shipment created"}</small>{shipping.shipmentId && <small>ID: {shipping.shipmentId}</small>}</> : <><span className="status-pill gold">Not shipped</span><small>{order.orderStatus || "Processing"}</small></>}</td>
+            <td>{shipping.lastTrackedAt ? new Date(shipping.lastTrackedAt).toLocaleString() : shipping.status ? "Created / not refreshed" : "No tracking yet"}</td>
+            <td><div className="shipping-actions">
+              {shipping.awb ? <button className="action-btn view" disabled={!!busyId} onClick={() => trackOrder(order)}>{busyId === order._id ? "Tracking…" : "Refresh tracking"}</button> : <button className="action-btn edit" disabled={!!busyId || order.orderStatus === "Cancelled"} onClick={() => openCreate(order)}>Create shipment</button>}
+              {shipping.labelUrl && <a className="action-btn view" href={shipping.labelUrl} target="_blank" rel="noreferrer">Label ↗</a>}
+              {shipping.rawCreateResponse && <button className="action-btn view" onClick={() => setTrackingResult({ data: shipping.rawCreateResponse, history: [] })}>Response</button>}
+            </div></td>
+          </tr>;
+        })}
+      </tbody></table>{!filtered.length && <Empty />}</div>
+    </section>
+    {showPayload && selectedOrder && <div className="shipping-modal-backdrop" role="presentation"><section className="shipping-modal" role="dialog" aria-modal="true" aria-labelledby="shipping-modal-title">
+      <div className="shipping-modal-head"><div><span className="shipping-eyebrow">EKART SHIPMENT</span><h3 id="shipping-modal-title">Create shipment · #{selectedOrder.orderId || String(selectedOrder._id).slice(-8)}</h3></div><button className="shipping-close" onClick={() => setShowPayload(false)} aria-label="Close">×</button></div>
+      <p className="shipping-help">Review and edit the JSON request before sending. The suggested fields are generated from this order; adapt the payload to the exact request schema in your Ekart API documentation.</p>
+      <form onSubmit={submitCreate}><label className="shipping-json-label">Request body · JSON</label><textarea className="shipping-json-editor" value={payloadText} onChange={e => setPayloadText(e.target.value)} spellCheck={false} rows={17}/>
+        <div className="shipping-modal-foot"><button type="button" className="action-btn view" onClick={() => setShowPayload(false)}>Cancel</button><button type="submit" className="admin-primary-btn" disabled={!!busyId}>{busyId === selectedOrder._id ? "Creating…" : "Send to Ekart"}</button></div>
+      </form>
+    </section></div>}
+  </div>;
 }
 
 function UserTable({ users, onEdit, onDelete }) {

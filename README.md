@@ -91,3 +91,8 @@ To run the development server:
 ```bash
 npm run dev
 ```
+
+
+## Ekart shipping integration
+
+See [EKART_SHIPPING_SETUP.md](./EKART_SHIPPING_SETUP.md) for server-side API configuration, shipment creation, AWB tracking, and deployment steps. Copy `.env.example` to `.env.local` and configure endpoint paths and auth to match the API contract shown in your Ekart account documentation. Never commit `.env.local`.

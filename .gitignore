@@ -38,3 +38,6 @@ yarn-error.log*
 # Next.js
 .next/
 out/
+
+# Keep the safe template tracked; never commit real credentials
+!.env.example

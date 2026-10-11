@@ -36,9 +36,9 @@ console.log("pathname", pathname);
           <li 
               className={pathname === "/myaddress" ? "active" : ""}
               onClick={() => router.push("myaddress")}>My Addresses</li>
-          <li 
+          {/* <li 
               className={pathname === "/mybank" ? "active" : ""}
-              onClick={() => router.push("mybank")}>My Bank Account</li>
+              onClick={() => router.push("mybank")}>My Bank Account</li> */}
         </ul>
       </aside>
 

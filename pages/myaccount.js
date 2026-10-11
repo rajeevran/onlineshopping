@@ -107,28 +107,15 @@ export default function MyAccountPage() {
   };
 
   return (
-    <div className="account-page">
+     <div className="account-page orders-page">
       <div className="account-container">
         <aside className="account-sidebar">
-          <div className="profile-card">
-            <div className="avatar">👤</div>
-            <h4>{users[0]?.firstName || "My"} {users[0]?.lastName || "Account"}</h4>
-            <p className="email">{users[0]?.email || ""}</p>
-          </div>
-
+          <div className="profile-card"><div className="avatar">{(users[0]?.firstName || "A").slice(0, 1).toUpperCase()}</div><h4>{[users[0]?.firstName, users[0]?.lastName].filter(Boolean).join(" ") || "My Account"}</h4><p className="email">{users[0]?.email || "Manage your purchases"}</p></div>
           <nav className="account-menu" aria-label="Account navigation">
-            <button className={pathname === "/myaccount" ? "active" : ""} onClick={() => router.push("/myaccount")}>
-              <span>👤</span><span>My Profile</span>
-            </button>
-            <button className={pathname === "/myorders" ? "active" : ""} onClick={() => router.push("/myorders")}>
-              <span>📦</span><span>My Orders</span>
-            </button>
-            <button className={pathname === "/myaddress" ? "active" : ""} onClick={() => router.push("/myaddress")}>
-              <span>📍</span><span>My Addresses</span>
-            </button>
-            <button className={pathname === "/mybank" ? "active" : ""} onClick={() => router.push("/mybank")}>
-              <span>🏦</span><span>My Bank Account</span>
-            </button>
+            <button className={pathname === "/myaccount" ? "active" : ""} onClick={() => router.push("/myaccount")}><span>♙</span><span>My Profile</span></button>
+            <button className={pathname === "/myorders" ? "active" : ""} onClick={() => router.push("/myorders")}><span>▣</span><span>My Orders</span></button>
+            <button className={pathname === "/myaddress" ? "active" : ""} onClick={() => router.push("/myaddress")}><span>⌖</span><span>My Addresses</span></button>
+            {/* <button className={pathname === "/mybank" ? "active" : ""} onClick={() => router.push("/mybank")}><span>▤</span><span>My Bank Account</span></button> */}
           </nav>
         </aside>
 

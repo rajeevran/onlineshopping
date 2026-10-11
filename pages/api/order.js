@@ -6,7 +6,7 @@ import Address from "../../models/Address";
 import Product from "../../models/Product";
 import BankAccount from "../../models/BankAccount";
 
-const JWT_SECRET = "$secret123#";
+const JWT_SECRET = process.env.JWT_SECRET || "$secret123#";
 
 function getDecodedUser(req) {
   const authHeader = req.headers.authorization || req.headers.Authorization || "";

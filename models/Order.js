@@ -31,6 +31,24 @@ const OrderSchema = new mongoose.Schema(
     addressId: { type: mongoose.Schema.Types.ObjectId, ref: "Address" },
     bankAccountId: { type: mongoose.Schema.Types.ObjectId, ref: "BankAccount" },
     paymentId: String,
+    shipping: {
+      carrier: { type: String, default: "Ekart" },
+      awb: String,
+      shipmentId: String,
+      status: String,
+      trackingUrl: String,
+      labelUrl: String,
+      lastTrackedAt: Date,
+      rawCreateResponse: mongoose.Schema.Types.Mixed,
+      rawTrackingResponse: mongoose.Schema.Types.Mixed,
+      history: [{
+        status: String,
+        description: String,
+        location: String,
+        timestamp: Date,
+        raw: mongoose.Schema.Types.Mixed,
+      }],
+    },
   },
   { timestamps: true }
 );

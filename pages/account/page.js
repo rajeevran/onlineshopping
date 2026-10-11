@@ -25,7 +25,7 @@ export default function MyAccountPage() {
           <li>My Orders</li>
           <li>My Wishlist</li>
           <li>My Addresses</li>
-          <li>My Bank Account</li>
+          {/* <li>My Bank Account</li> */}
         </ul>
       </aside>
 

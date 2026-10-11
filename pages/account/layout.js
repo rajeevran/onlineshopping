@@ -12,7 +12,6 @@ export default function AccountLayout({ children }) {
     { name: "My Orders", path: "/account/orders" },
     { name: "My Wishlist", path: "/account/wishlist" },
     { name: "My Addresses", path: "/account/addresses" },
-    { name: "My Bank Account", path: "/account/bank" }
   ];
 
   return (
