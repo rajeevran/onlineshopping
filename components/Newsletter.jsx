@@ -6,8 +6,8 @@ const Newsletter = () => {
   };
 
   return (
-    <section className='newsletter'>
-      <div className="newsletter-background">
+    <section className=''>
+      {/* <div className="newsletter-background">
         Newsletter
       </div>
       <h1>Subscribe Our Newsletter</h1>
@@ -15,7 +15,7 @@ const Newsletter = () => {
       <form onSubmit={handleSubmit}>
         <input type='email' placeholder='Input email address'></input>
         <button type='submit'>Get Started</button>
-      </form>
+      </form> */}
     </section>
   )
 }
