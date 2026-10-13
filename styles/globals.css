@@ -4700,8 +4700,8 @@ body {
   .footer-bottom > p { flex: 1 1 100%; }
 }
 
-/* Final footer responsive pass: tablet landscape / narrow desktop (e.g. 1136px wide) */
-@media screen and (min-width: 761px) and (max-width: 1200px) {
+/* Final footer responsive pass: tablet landscape / narrow desktop (761px–1300px) */
+@media screen and (min-width: 761px) and (max-width: 1300px) {
   .site-footer {
     width: 100%;
     max-width: 100%;
@@ -4841,4 +4841,417 @@ body {
   .footer-payment-icons {
     flex-wrap: wrap;
   }
+}
+
+
+/* Extra-small phones: harden footer layout at 320px and below (including 300px viewports) */
+@media screen and (max-width: 320px) {
+  .site-footer {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-top: 26px;
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow-x: clip;
+  }
+
+  .site-footer *,
+  .site-footer *::before,
+  .site-footer *::after { box-sizing: border-box; }
+
+  .footer-promo {
+    width: 100%;
+    min-width: 0;
+    padding: 20px 14px;
+    gap: 14px;
+  }
+  .footer-promo-copy { width: 100%; min-width: 0; }
+  .footer-kicker { font-size: 8px; letter-spacing: .12em; overflow-wrap: anywhere; }
+  .footer-promo h2 { max-width: 100%; font-size: 21px; line-height: 1.2; overflow-wrap: anywhere; }
+  .footer-promo p { max-width: 100%; font-size: 11px; line-height: 1.55; overflow-wrap: anywhere; }
+  .footer-shop-cta { width: 100%; min-width: 0; padding: 12px 9px; gap: 7px; font-size: 10px; white-space: normal; text-align: center; }
+
+  .footer-main {
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding-top: 28px;
+    padding-bottom: 24px;
+  }
+  .footer-main > *,
+  .footer-brand-column,
+  .footer-link-group,
+  .footer-contact-group { width: 100%; min-width: 0; max-width: 100%; grid-column: 1 / -1; }
+  .footer-brand-logo { display: inline-flex; max-width: 100%; }
+  .footer-brand-logo img { width: 130px; max-width: 100%; height: auto; }
+  .footer-brand-copy,
+  .footer-contact-group > p,
+  .footer-shipping-note,
+  .footer-shipping-note > span:last-child,
+  .footer-shipping-note small { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+  .footer-socials { display: flex; flex-wrap: wrap; gap: 7px; max-width: 100%; }
+  .footer-socials a { width: 30px; height: 30px; flex: 0 0 30px; }
+  .footer-link-group ul { width: 100%; min-width: 0; }
+  .footer-link-group li { min-width: 0; max-width: 100%; }
+  .footer-link-group li a { display: inline-flex; max-width: 100%; white-space: normal; overflow-wrap: anywhere; word-break: normal; }
+  .footer-link-group li a svg { display: none; }
+  .footer-contact-group { display: flex; flex-direction: column; align-items: flex-start; gap: 11px; }
+  .footer-contact-link { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .footer-shipping-note { display: flex; align-items: flex-start; gap: 9px; padding: 11px; }
+
+  .footer-trust-row {
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 15px;
+    padding: 18px 0;
+  }
+  .footer-trust-item { width: 100%; min-width: 0; align-items: flex-start; gap: 9px; }
+  .footer-trust-item > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+  .footer-trust-item strong,
+  .footer-trust-item small { overflow-wrap: anywhere; }
+  .footer-payment-block { width: 100%; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 9px; }
+  .footer-payment-label { white-space: normal; overflow-wrap: anywhere; }
+  .footer-payment-icons { display: flex; flex-wrap: wrap; gap: 12px; max-width: 100%; font-size: 22px; }
+
+  .footer-bottom { width: 100%; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 17px 0 20px; }
+  .footer-bottom > *,
+  .footer-bottom > p,
+  .footer-legal-links { width: 100%; min-width: 0; max-width: 100%; }
+  .footer-bottom > p { margin: 0; overflow-wrap: anywhere; }
+  .footer-legal-links { display: flex; flex-wrap: wrap; gap: 9px 13px; }
+  .footer-legal-links a,
+  .footer-secure-label { white-space: normal; overflow-wrap: anywhere; }
+}
+
+/*
+ * Final, explicit footer layout for narrow desktop widths.
+ * Keep this block LAST so it wins over earlier overlapping footer media queries.
+ */
+@media screen and (min-width: 1001px) and (max-width: 1300px) {
+  .site-footer {
+    width: 100%;
+    max-width: 100%;
+    padding-inline: clamp(20px, 3vw, 38px);
+    overflow-x: clip;
+  }
+
+  .footer-promo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    align-items: center;
+    gap: 24px;
+    padding: 30px clamp(22px, 3vw, 36px);
+  }
+
+  .footer-promo-copy { width: auto; min-width: 0; max-width: 100%; }
+  .footer-promo h2 { max-width: 100%; font-size: clamp(25px, 2.4vw, 32px); line-height: 1.2; overflow-wrap: anywhere; }
+  .footer-promo p { max-width: 100%; overflow-wrap: anywhere; }
+  .footer-shop-cta { width: auto; max-width: 100%; min-width: 0; white-space: normal; text-align: center; }
+
+  .footer-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(145px, 0.78fr) minmax(165px, 0.9fr);
+    gap: 34px clamp(20px, 2.5vw, 32px);
+    align-items: start;
+    padding-block: 42px 34px;
+  }
+  .footer-brand-column { grid-column: 1; width: auto; max-width: 100%; min-width: 0; }
+  .footer-brand-copy { max-width: 100%; }
+  .footer-link-group { grid-column: auto; width: auto; max-width: 100%; min-width: 0; }
+  .footer-link-group h3, .footer-contact-group h3 { margin-top: 5px; margin-bottom: 16px; }
+  .footer-link-group li, .footer-link-group li a { min-width: 0; max-width: 100%; }
+  .footer-link-group li a { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; overflow-wrap: anywhere; }
+
+  .footer-contact-group {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px 26px;
+    align-items: start;
+    width: 100%; max-width: 100%; min-width: 0;
+    padding-top: 25px;
+    border-top: 1px solid #34352f;
+  }
+  .footer-contact-group h3 { grid-column: 1 / -1; margin: 0; }
+  .footer-contact-group > p { width: 100%; max-width: 520px; min-width: 0; margin: 0; }
+  .footer-contact-link { justify-self: start; align-self: start; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .footer-shipping-note { grid-column: 2; grid-row: 2 / span 2; width: 100%; max-width: 480px; min-width: 0; margin: 0; }
+
+  .footer-trust-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) max-content;
+    align-items: center;
+    gap: 18px clamp(16px, 2vw, 26px);
+  }
+  .footer-trust-item { min-width: 0; align-items: flex-start; gap: 9px; }
+  .footer-trust-item > span:last-child, .footer-trust-item small { min-width: 0; overflow-wrap: anywhere; }
+  .footer-payment-block { grid-column: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 10px 14px; min-width: 0; margin-left: 0; }
+  .footer-payment-label { white-space: normal; }
+  .footer-payment-icons { display: flex; flex-wrap: wrap; gap: 10px; max-width: 100%; font-size: 22px; }
+
+  .footer-bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; }
+  .footer-bottom > p { flex: 0 1 auto; max-width: 100%; }
+  .footer-legal-links { display: flex; flex-wrap: wrap; gap: 10px 16px; max-width: 100%; }
+  .footer-secure-label { white-space: normal; }
+}
+
+@media screen and (min-width: 1001px) and (max-width: 1100px) {
+  .footer-main { grid-template-columns: minmax(0, 1fr) minmax(135px, 0.7fr) minmax(150px, 0.8fr); gap: 30px 18px; }
+  .footer-trust-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .footer-payment-block { grid-column: 1 / -1; padding-top: 4px; }
+}
+
+/* Responsive correction for medium desktop widths: 1001px–1300px.
+   Deliberately uses a stable two-column content grid instead of squeezing
+   four footer groups into desktop columns. This block must remain last. */
+@media screen and (min-width: 1001px) and (max-width: 1300px) {
+  .site-footer {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding-left: clamp(20px, 3vw, 38px);
+    padding-right: clamp(20px, 3vw, 38px);
+    overflow-x: clip;
+  }
+
+  .site-footer .footer-promo {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 18px;
+    width: 100%;
+    min-width: 0;
+    padding: 28px clamp(20px, 3vw, 34px);
+  }
+  .site-footer .footer-promo-copy { width: 100%; min-width: 0; max-width: 100%; flex: 1 1 auto; }
+  .site-footer .footer-promo h2 { max-width: 100%; font-size: clamp(25px, 2.5vw, 32px); line-height: 1.2; overflow-wrap: anywhere; }
+  .site-footer .footer-promo p { max-width: 100%; overflow-wrap: anywhere; }
+  .site-footer .footer-shop-cta { display: inline-flex; align-self: flex-start; max-width: 100%; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+
+  .site-footer .footer-main {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 30px clamp(24px, 3vw, 38px);
+    width: 100%;
+    min-width: 0;
+    padding: 42px 0 34px;
+  }
+  .site-footer .footer-main > *,
+  .site-footer .footer-brand-column,
+  .site-footer .footer-link-group,
+  .site-footer .footer-contact-group { min-width: 0; max-width: 100%; }
+  .site-footer .footer-brand-column { grid-column: 1 / -1; width: 100%; }
+  .site-footer .footer-brand-copy { max-width: 540px; overflow-wrap: anywhere; }
+  .site-footer .footer-link-group { grid-column: auto; width: 100%; }
+  .site-footer .footer-link-group ul { width: 100%; min-width: 0; }
+  .site-footer .footer-link-group li { min-width: 0; max-width: 100%; }
+  .site-footer .footer-link-group li a { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; width: 100%; min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .site-footer .footer-link-group li a svg { flex: 0 0 auto; }
+
+  .site-footer .footer-contact-group {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 12px 24px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding-top: 24px;
+    border-top: 1px solid #34352f;
+  }
+  .site-footer .footer-contact-group h3 { grid-column: 1 / -1; margin: 0; }
+  .site-footer .footer-contact-group > p { width: 100%; min-width: 0; max-width: 520px; margin: 0; overflow-wrap: anywhere; }
+  .site-footer .footer-contact-link { justify-self: start; align-self: start; min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .site-footer .footer-shipping-note { grid-column: 2; grid-row: 2 / span 2; width: 100%; min-width: 0; max-width: 480px; margin: 0; }
+  .site-footer .footer-shipping-note > span:last-child,
+  .site-footer .footer-shipping-note small { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+
+  .site-footer .footer-trust-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 18px 24px;
+    width: 100%;
+    min-width: 0;
+  }
+  .site-footer .footer-trust-item { display: flex; align-items: flex-start; gap: 10px; min-width: 0; max-width: 100%; }
+  .site-footer .footer-trust-item > span:last-child,
+  .site-footer .footer-trust-item strong,
+  .site-footer .footer-trust-item small { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+  .site-footer .footer-payment-block { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 12px 18px; width: 100%; min-width: 0; margin: 0; padding-top: 4px; }
+  .site-footer .footer-payment-label { white-space: normal; }
+  .site-footer .footer-payment-icons { display: flex; flex-wrap: wrap; gap: 10px 14px; max-width: 100%; }
+
+  .site-footer .footer-bottom { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px 20px; width: 100%; min-width: 0; }
+  .site-footer .footer-bottom > p { flex: 1 1 100%; max-width: 100%; overflow-wrap: anywhere; }
+  .site-footer .footer-legal-links { display: flex; flex-wrap: wrap; gap: 10px 16px; min-width: 0; max-width: 100%; }
+  .site-footer .footer-legal-links a,
+  .site-footer .footer-secure-label { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+}
+
+@media screen and (min-width: 1001px) and (max-width: 1100px) {
+  .site-footer .footer-contact-group { grid-template-columns: minmax(0, 1fr); }
+  .site-footer .footer-contact-group h3 { grid-column: 1; }
+  .site-footer .footer-shipping-note { grid-column: 1; grid-row: auto; }
+  .site-footer .footer-trust-row { grid-template-columns: minmax(0, 1fr); }
+  .site-footer .footer-payment-block { grid-column: 1; }
+}
+
+
+
+/* Definitive fix: prevent footer navigation links collapsing into narrow vertical columns
+   at 1001px–1300px. This block intentionally overrides older footer media rules. */
+@media screen and (min-width: 1001px) and (max-width: 1300px) {
+  .site-footer .footer-main {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    column-gap: clamp(24px, 4vw, 48px) !important;
+    row-gap: 32px !important;
+    align-items: start !important;
+  }
+
+  .site-footer .footer-brand-column {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .site-footer .footer-link-group {
+    display: block !important;
+    grid-column: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .site-footer .footer-link-group ul {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    list-style: none !important;
+  }
+
+  .site-footer .footer-link-group li {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .site-footer .footer-link-group li a {
+    display: flex !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    writing-mode: horizontal-tb !important;
+  }
+
+  .site-footer .footer-link-group li a svg {
+    flex: 0 0 auto !important;
+  }
+
+  .site-footer .footer-contact-group {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    gap: 12px !important;
+  }
+
+  .site-footer .footer-contact-group > p {
+    width: 100% !important;
+    max-width: 680px !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .site-footer .footer-shipping-note {
+    width: min(100%, 480px) !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 4px 0 0 !important;
+  }
+
+  .site-footer .footer-shipping-note > span:last-child,
+  .site-footer .footer-shipping-note small {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .site-footer .footer-trust-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    gap: 20px 24px !important;
+  }
+
+  .site-footer .footer-payment-block {
+    grid-column: 1 / -1 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+    gap: 12px 20px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .site-footer .footer-bottom {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 14px 24px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .site-footer .footer-legal-links {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px 18px !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Editorial company and policy pages */
+.editorial-page { width: min(100% - 40px, 1040px); margin: 0 auto; padding: clamp(48px, 8vw, 96px) 0 90px; color: #25251f; }
+.editorial-eyebrow { margin-bottom: 18px; color: #92754e; font-size: 10px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+.editorial-page > h1 { max-width: 850px; margin: 0; font: 400 clamp(42px, 7vw, 82px)/1.04 Georgia, 'Times New Roman', serif; letter-spacing: -.045em; }
+.editorial-page > h1 em { color: #9b7a4d; font-weight: 400; }
+.editorial-lead { max-width: 680px; margin: 24px 0 0; color: #68675f; font-size: clamp(15px, 1.8vw, 19px); line-height: 1.85; }
+.editorial-rule { height: 1px; margin: 38px 0 34px; background: #dedbd3; }
+.editorial-copy { max-width: 790px; }
+.editorial-copy h2 { margin: 30px 0 11px; font-size: 16px; line-height: 1.5; font-weight: 650; letter-spacing: -.01em; }
+.editorial-copy h2:first-child { margin-top: 0; }
+.editorial-copy p { margin: 0 0 16px; color: #65645d; font-size: 14px; line-height: 1.95; }
+.editorial-cta { display: inline-flex; align-items: center; gap: 20px; margin-top: 22px; padding: 14px 19px; background: #25251f; color: #fff; border-radius: 3px; font-size: 12px; transition: background .2s ease; }
+.editorial-cta:hover { background: #8b6c43; }
+.policy-note { margin-top: 24px; padding: 14px 16px; border-left: 2px solid #b89a6b; background: #f7f4ee; color: #6d6252; font-size: 12px; line-height: 1.75; }
+@media (max-width: 600px) {
+  .editorial-page { width: calc(100% - 34px); padding: 44px 0 58px; }
+  .editorial-eyebrow { font-size: 9px; letter-spacing: .16em; }
+  .editorial-lead { margin-top: 18px; line-height: 1.75; }
+  .editorial-rule { margin: 28px 0; }
+  .editorial-copy h2 { margin-top: 25px; font-size: 15px; }
+  .editorial-copy p { font-size: 13px; line-height: 1.85; }
 }

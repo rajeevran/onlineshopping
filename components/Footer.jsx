@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import logo from '../src/assets/Logo.png'
 import { GrFacebookOption, GrInstagram, GrYoutube, GrLinkedinOption } from 'react-icons/gr'
 import { FaCcMastercard, FaCcVisa, FaShieldAlt, FaArrowRight } from 'react-icons/fa'
 import { RiTwitterXLine } from 'react-icons/ri'
@@ -16,8 +15,6 @@ const Footer = () => {
 
   return (
     <footer className="site-footer">
-
-
       <div className="footer-main">
         <div className="footer-brand-column">
           <p className="footer-brand-copy">A considered wardrobe, curated for the way you live. Find pieces you’ll reach for, season after season.</p>
@@ -41,6 +38,16 @@ const Footer = () => {
             <FooterLink href="/products">New arrivals</FooterLink>
           </ul>
         </nav>
+{/* 
+        <nav className="footer-link-group" aria-label="Company information">
+          <h3>RanRax Fashion</h3>
+          <ul>
+            <FooterLink href="/about">About us</FooterLink>
+            <FooterLink href="/privacy">Privacy</FooterLink>
+            <FooterLink href="/terms">Terms & conditions</FooterLink>
+            <FooterLink href="/shipping-returns">Shipping & returns</FooterLink>
+          </ul>
+        </nav> */}
 
         <nav className="footer-link-group" aria-label="Customer support">
           <h3>Help & support</h3>
@@ -68,8 +75,13 @@ const Footer = () => {
       </div>
 
       <div className="footer-bottom">
-        <p>© {year} Noadua. All rights reserved.</p>
-        <div className="footer-legal-links"><Link href="/comingsoon">Privacy</Link><Link href="/comingsoon">Terms</Link><Link href="/comingsoon">Shipping & returns</Link></div>
+        <p>© {year} RanRax Fashion Pvt. Ltd. All rights reserved.</p>
+        <div className="footer-legal-links">
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms</Link>
+          <Link href="/shipping-returns">Shipping & returns</Link>
+          <Link href="/about">About us</Link>
+        </div>
         <span className="footer-secure-label"><FaShieldAlt /> Secure shopping</span>
       </div>
     </footer>
