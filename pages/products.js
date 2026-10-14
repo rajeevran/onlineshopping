@@ -71,15 +71,6 @@ const ProductsPage = () => {
   }
 
   return <main className="catalog-page">
-    <section className="catalog-hero">
-      <div className="catalog-hero-copy">
-        <p className="catalog-eyebrow">THE NOADUA EDIT</p>
-        <h1>{category === 'sale' ? <>The <em>sale edit.</em></> : category === 'new-in' ? <>Just <em>arrived.</em></> : <>Find your <em>feeling.</em></>}</h1>
-        <p>Considered silhouettes, thoughtful details, and pieces made to be worn your way.</p>
-        <a href="#catalog-grid" className="catalog-hero-link">Explore the edit <span>↘</span></a>
-      </div>
-      <div className="catalog-hero-art" aria-hidden="true"><span className="catalog-art-number">N° 01 — NOADUA</span><span className="catalog-art-word">EVERYDAY<br />ELEGANCE</span><span className="catalog-art-circle">NEW<br />SEASON</span></div>
-    </section>
     <section className="catalog-content" id="catalog-grid">
       <div className="catalog-heading-row"><div><p className="catalog-eyebrow">SHOP THE COLLECTION</p><h2>{activeLabel}</h2><p className="catalog-result-count">{loading ? 'Finding your pieces…' : `${visibleProducts.length} ${visibleProducts.length === 1 ? 'piece' : 'pieces'} to explore`}</p></div>
         <label className="catalog-search"><FiSearch size={18} /><input value={search} onChange={(event) => updateSearch(event.target.value)} placeholder="Search the collection" aria-label="Search products" />{search && <button type="button" onClick={() => updateSearch('')} aria-label="Clear search"><FiX /></button>}</label>
