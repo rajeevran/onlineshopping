@@ -13,6 +13,8 @@ const ProductSchema = new mongoose.Schema({
   sizes: [String],
   colors: [String],
   featured: { type: Boolean, default: false },
+  newArrival: { type: Boolean, default: false },
+  onSale: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });
 

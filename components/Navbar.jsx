@@ -68,16 +68,16 @@ const Navbar = () => {
       </div>
 
       <nav className="modern-navbar">
-        <Link href="/" className="brand-logo" aria-label="Noadua home">
+        <Link href="/" className="brand-logo1" aria-label="Noadua home">
           <Image src="/Logo.png" width={190} height={78} alt="Noadua" priority />
         </Link>
 
         <div className="desktop-nav-links">
-          <Link href="/products">NEW IN</Link>
-          <Link href="/products">DRESSES</Link>
-          <Link href="/products">SUITS</Link>
-          <Link href="/products">COLLECTIONS</Link>
-          <Link href="/products" className="sale-link">SALE</Link>
+          <Link href="/products?category=new-in">NEW IN</Link>
+          <Link href="/products?category=dresses">DRESSES</Link>
+          <Link href="/products?category=suits">SUITS</Link>
+          <Link href="/products?category=collections">COLLECTIONS</Link>
+          <Link href="/products?category=sale" className="sale-link">SALE</Link>
         </div>
 
         <form className="modern-search" onSubmit={handleSearch}>
@@ -149,12 +149,12 @@ const Navbar = () => {
             <button type="submit"><CiSearch size={23} /></button>
           </form>
           <div className="mobile-nav-links">
-            <Link href="/products" onClick={closeMobileMenu}>NEW IN</Link>
+            <Link href="/products?category=new-in" onClick={closeMobileMenu}>NEW IN</Link>
             <Link href="/kurti" onClick={closeMobileMenu}>KURTIS</Link>
-            <Link href="/products" onClick={closeMobileMenu}>DRESSES</Link>
-            <Link href="/products" onClick={closeMobileMenu}>SUITS</Link>
-            <Link href="/products" onClick={closeMobileMenu}>COLLECTIONS</Link>
-            <Link href="/products" onClick={closeMobileMenu} className="sale-link">SALE</Link>
+            <Link href="/products?category=dresses" onClick={closeMobileMenu}>DRESSES</Link>
+            <Link href="/products?category=suits" onClick={closeMobileMenu}>SUITS</Link>
+            <Link href="/products?category=collections" onClick={closeMobileMenu}>COLLECTIONS</Link>
+            <Link href="/products?category=sale" onClick={closeMobileMenu} className="sale-link">SALE</Link>
           </div>
           <div className="mobile-nav-bottom">
             <Link href="/cart" onClick={closeMobileMenu}>Cart ({totalQty || 0})</Link>

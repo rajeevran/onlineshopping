@@ -104,7 +104,7 @@ export default function AdminPage() {
   };
 
   const openCreateProduct = () => {
-    setForm({ name: "", price: "", discountPrice: "", category: "", description: "", tags: [], care: [], colors: [], sizes: [], images: [], imageFiles: [], primaryImageIndex: 0, inStock: true, featured: false });
+    setForm({ name: "", price: "", discountPrice: "", category: "", description: "", tags: [], care: [], colors: [], sizes: [], images: [], imageFiles: [], primaryImageIndex: 0, inStock: true, featured: false, newArrival: false, onSale: false });
     setModal({ type: "product", mode: "create" });
   };
 
@@ -128,6 +128,8 @@ export default function AdminPage() {
         colors: Array.isArray(item.colors) ? item.colors.filter(Boolean) : [],
         sizes: Array.isArray(item.sizes) ? item.sizes.filter(Boolean) : [],
         images: Array.isArray(item.images) ? item.images : [],
+        newArrival: !!item.newArrival,
+        onSale: !!item.onSale,
         imageFiles: [],
         primaryImageIndex: 0,
       });
@@ -150,6 +152,8 @@ export default function AdminPage() {
       if (modal.type === "product") {
         if (modal.mode === "create") {
           const productPayload = { ...form };
+          productPayload.newArrival = !!form.newArrival;
+          productPayload.onSale = !!form.onSale;
           delete productPayload._id; delete productPayload.createdAt; delete productPayload.__v;
           delete productPayload.images; delete productPayload.imageFiles; delete productPayload.primaryImageIndex;
           const created = await api.post("/products", productPayload);
@@ -183,6 +187,8 @@ export default function AdminPage() {
             ? form.sizes.map(x => String(x).trim()).filter(Boolean)
             : String(form.sizes || "").split(",").map(x => x.trim()).filter(Boolean);
           payload.images = Array.isArray(form.images) ? form.images.filter(Boolean) : [];
+          payload.newArrival = !!form.newArrival;
+          payload.onSale = !!form.onSale;
           delete payload._id; delete payload.createdAt; delete payload.__v; delete payload.primaryImageIndex;
           await api.put(`/products/${modal.item._id}`, payload);
         }
@@ -368,7 +374,7 @@ function Stat({ title, value, icon, onClick }) {
 
 function ProductTable({ products, onEdit, onDelete }) {
   return <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Featured</th><th>Actions</th></tr></thead><tbody>
-    {products.map(p=><tr key={p._id}><td><div className="table-product">{p.images?.[0] ? <img src={imageUrl(p.images[0])} /> : <div className="no-img">NO</div>}<div><b>{p.name}</b><small>{p._id}</small></div></div></td><td>{p.category || "—"}</td><td>₹{Number(p.discountPrice || p.price || 0).toLocaleString("en-IN")}</td><td><span className={`status-pill ${p.inStock !== false ? "green":"red"}`}>{p.inStock !== false ? "In stock":"Out"}</span></td><td>{p.featured ? "Yes":"No"}</td><td><ActionButtons onEdit={()=>onEdit(p)} onDelete={()=>onDelete(p)} /></td></tr>)}
+    {products.map(p=><tr key={p._id}><td><div className="table-product">{p.images?.[0] ? <img src={imageUrl(p.images[0])} /> : <div className="no-img">NO</div>}<div><b>{p.name}</b><small>{p._id}</small></div></div></td><td><div>{p.category || "—"}</div><div className="admin-product-badges">{p.newArrival && <span>NEW IN</span>}{(p.onSale || Number(p.discountPrice) > 0) && <span className="sale">SALE</span>}{p.featured && <span className="featured">FEATURED</span>}</div></td><td>₹{Number(p.discountPrice || p.price || 0).toLocaleString("en-IN")}</td><td><span className={`status-pill ${p.inStock !== false ? "green":"red"}`}>{p.inStock !== false ? "In stock":"Out"}</span></td><td>{p.featured ? "Yes":"No"}</td><td><ActionButtons onEdit={()=>onEdit(p)} onDelete={()=>onDelete(p)} /></td></tr>)}
   </tbody></table>{!products.length&&<Empty />}</div>;
 }
 
@@ -575,8 +581,9 @@ function Modal({title,onClose,children}){return <div className="admin-modal-back
 function EditForm({type,form,setForm,onSubmit,saving,products}) {
   const set=(key,val)=>setForm(prev=>({...prev,[key]:val}));
   if(type==="product") return <form className="admin-form" onSubmit={onSubmit}>
-    <div className="form-grid two"><Field label="Product name"><input value={form.name||""} onChange={e=>set("name",e.target.value)} required /></Field><Field label="Category"><input value={form.category||""} onChange={e=>set("category",e.target.value)} /></Field></div>
-    <div className="form-grid three"><Field label="Price"><input type="number" value={form.price||""} onChange={e=>set("price",e.target.value)} required /></Field><Field label="Discount price"><input type="number" value={form.discountPrice||""} onChange={e=>set("discountPrice",e.target.value)} /></Field><Field label="Stock"><select value={String(form.inStock !== false)} onChange={e=>set("inStock",e.target.value==="true")}><option value="true">In stock</option><option value="false">Out of stock</option></select></Field></div>
+    <div className="form-grid two"><Field label="Product name"><input value={form.name||""} onChange={e=>set("name",e.target.value)} required /></Field><Field label="Shop category"><select value={form.category||""} onChange={e=>set("category",e.target.value)}><option value="">Choose a category</option><option value="Dresses">Dresses</option><option value="Suits">Suits</option><option value="Collections">Collections</option><option value="Other">Other</option></select></Field></div>
+    <div className="form-grid three"><Field label="Price (₹)"><input type="number" min="0" value={form.price??""} onChange={e=>set("price",e.target.value)} required /></Field><Field label="Discount price (₹)"><input type="number" min="0" value={form.discountPrice??""} onChange={e=>set("discountPrice",e.target.value)} placeholder="Optional" /></Field><Field label="Stock"><select value={String(form.inStock !== false)} onChange={e=>set("inStock",e.target.value==="true")}><option value="true">In stock</option><option value="false">Out of stock</option></select></Field></div>
+    <div className="admin-product-flags"><div><strong>Storefront placement</strong><small>Choose which navbar edits should include this product.</small></div><div className="admin-product-flag-options"><label className="check"><input type="checkbox" checked={!!form.newArrival} onChange={e=>set("newArrival",e.target.checked)} /> New In</label><label className="check"><input type="checkbox" checked={!!form.onSale} onChange={e=>set("onSale",e.target.checked)} /> Sale</label><label className="check"><input type="checkbox" checked={!!form.featured} onChange={e=>set("featured",e.target.checked)} /> Featured</label></div></div>
     <Field label="Description"><textarea rows="4" value={form.description||""} onChange={e=>set("description",e.target.value)} /></Field>
     <Field label="Tags">
       <ValueListManager
@@ -623,7 +630,6 @@ function EditForm({type,form,setForm,onSubmit,saving,products}) {
         createInputName="images"
       />
     </Field>
-    <label className="check"><input type="checkbox" checked={!!form.featured} onChange={e=>set("featured",e.target.checked)} /> Featured product</label>
     <FormActions saving={saving}/>
   </form>;
 
