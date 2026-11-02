@@ -104,11 +104,17 @@ export default async function handler(req, res) {
       // Development OTP service: no real SMS is sent yet.
       // The verification code is intentionally static until an SMS provider is connected.
       const generatedOtp = generateOtp();
+      const user =await User.findOne({phone:mobile});
+          
+      let VAR1_VALUE = ' Guest '; 
+      if(user){
+       VAR1_VALUE=user.firstName;
+      }  
+      const VAR2_VALUE = 5; 
 
       const result = await providerRequest(
-        `SMS/${encodeURIComponent(`91${mobile}`)}/${encodeURIComponent(generatedOtp)}`
+        `SMS/${encodeURIComponent(`91${mobile}`)}/${encodeURIComponent(generatedOtp)}/NOADUA_LOGIN?var1=${VAR1_VALUE}&var2=${VAR2_VALUE}`
       );
-
       return res.status(200).json({
         success: true,
         sessionId: result.Details,
@@ -134,10 +140,16 @@ export default async function handler(req, res) {
         `SMS/VERIFY/${encodeURIComponent(sessionId)}/${encodeURIComponent(enteredOtp)}`
       );
 
-      const user = await User.findOne({ phone: mobile });
+      let user = await User.findOne({ phone: mobile });
       if (!user) {
-        return res.status(404).json({
-          message: "Account not found. Please sign up first.",
+                user = await User.create({
+          firstName: "",
+          lastName: "",
+          phone: normalizedPhone,
+          // Existing deployments may have a non-sparse unique email index.
+          // Keep a private unique placeholder so phone-only accounts work safely.
+          email: `phone_${normalizedPhone}@noadua.local`,
+          role: "user",
         });
       }
 
