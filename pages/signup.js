@@ -178,7 +178,6 @@ export default function Signup() {
               <button type="submit" className="phone-auth-primary" disabled={loading}>
                 {loading ? "Verifying…" : "Verify & Login"}
               </button>
-              <p className="phone-auth-dev-note">Development OTP: <strong>1234</strong></p>
             </form>
           </>
         )}
